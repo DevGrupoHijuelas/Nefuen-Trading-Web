@@ -115,9 +115,11 @@ interface HazelnutProps {
   type?: 'kernel' | 'inshell'
   rotation?: [number, number, number]
   angularVelocity?: [number, number, number]
+  fixed?: boolean       // If true, RigidBody is fixed (doesn't fall)
+  scaleOverride?: number // Override default scale
 }
 
-export default function Hazelnut({ position, type = 'kernel', rotation = [0, 0, 0], angularVelocity = [0, 0, 0] }: HazelnutProps) {
+export default function Hazelnut({ position, type = 'kernel', rotation = [0, 0, 0], angularVelocity = [0, 0, 0], fixed = false, scaleOverride }: HazelnutProps) {
   const rigidBodyRef = useRef<any>(null)
   const fbx = useFBX('/models/hazelnut/BB_031_huzelnut.fbx')
   
@@ -190,12 +192,13 @@ export default function Hazelnut({ position, type = 'kernel', rotation = [0, 0, 
         colliders="ball"
         position={position}
         rotation={rotation}
+        type={fixed ? 'fixed' : 'dynamic'}
         restitution={type === 'inshell' ? 0.75 : 0.6}
         friction={type === 'inshell' ? 0.3 : 0.8}
         angularDamping={0.3}
       >
         <group ref={trackerRef} />
-        <primitive object={cloned} scale={type === 'inshell' ? 0.28 : 0.1} />
+        <primitive object={cloned} scale={scaleOverride ?? (type === 'inshell' ? 0.28 : 0.1)} />
       </RigidBody>
       <BlobShadow trackerRef={trackerRef} />
     </>
