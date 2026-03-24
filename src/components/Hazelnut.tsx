@@ -1,7 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useRef, useEffect } from 'react'
 import { RigidBody } from '@react-three/rapier'
 import { useFBX, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
+import BlobShadow from './BlobShadow'
 
 // --- Procedural Inshell Texture Generator ---
 // hilumSize: 0.0 = tiny scar, 1.0 = full current size
@@ -112,9 +113,12 @@ const INSHELL_TEXTURES = [
 interface HazelnutProps {
   position: [number, number, number]
   type?: 'kernel' | 'inshell'
+  rotation?: [number, number, number]
+  angularVelocity?: [number, number, number]
 }
 
-export default function Hazelnut({ position, type = 'kernel' }: HazelnutProps) {
+export default function Hazelnut({ position, type = 'kernel', rotation = [0, 0, 0], angularVelocity = [0, 0, 0] }: HazelnutProps) {
+  const rigidBodyRef = useRef<any>(null)
   const fbx = useFBX('/models/hazelnut/BB_031_huzelnut.fbx')
   
   const [colorMap, normalMap, dispMap] = useTexture([
@@ -168,14 +172,32 @@ export default function Hazelnut({ position, type = 'kernel' }: HazelnutProps) {
     return clone
   }, [fbx, colorMap, normalMap, dispMap, type, inshellTex])
 
+  // Tracker group inside RigidBody — BlobShadow reads its world position
+  const trackerRef = useRef<THREE.Group>(null)
+
+  // Apply initial angular velocity after physics body is created
+  useEffect(() => {
+    const rb = rigidBodyRef.current
+    if (rb) {
+      rb.setAngvel({ x: angularVelocity[0], y: angularVelocity[1], z: angularVelocity[2] }, true)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <RigidBody 
-      colliders="ball" 
-      position={position} 
-      restitution={type === 'inshell' ? 0.75 : 0.6} // Shells are bouncier and harder
-      friction={type === 'inshell' ? 0.3 : 0.8}     // Shells slide easily compared to kernels
-    >
-      <primitive object={cloned} scale={type === 'inshell' ? 0.28 : 0.1} />
-    </RigidBody>
+    <>
+      <RigidBody
+        ref={rigidBodyRef}
+        colliders="ball"
+        position={position}
+        rotation={rotation}
+        restitution={type === 'inshell' ? 0.75 : 0.6}
+        friction={type === 'inshell' ? 0.3 : 0.8}
+        angularDamping={0.3}
+      >
+        <group ref={trackerRef} />
+        <primitive object={cloned} scale={type === 'inshell' ? 0.28 : 0.1} />
+      </RigidBody>
+      <BlobShadow trackerRef={trackerRef} />
+    </>
   )
 }

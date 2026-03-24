@@ -1,137 +1,252 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Canvas } from '@react-three/fiber'
 import Scene from './components/Scene'
-import Lenis from 'lenis'
-import 'lenis/dist/lenis.css'
 import './index.css'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-
-gsap.registerPlugin(ScrollTrigger)
 
 function App() {
   const [showUI, setShowUI] = useState(false)
+  const currentSection = useRef(0)
+  const isAnimating = useRef(false)
+  const sectionsRef = useRef<HTMLElement[]>([])
+  const wrapperRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+  const totalSections = 4 // hero + 3 content sections
+
+  // Navigate to a specific section
+  const goToSection = useCallback((index: number) => {
+    if (index < 0 || index >= totalSections) return
+    if (isAnimating.current) return
+
+    const prevIndex = currentSection.current
+    isAnimating.current = true
+    currentSection.current = index
+
+    // Notify 3D scene of section change (progress 0–1)
+    const progress = index / (totalSections - 1)
+    window.dispatchEvent(new CustomEvent('section-change', { detail: { section: index, progress } }))
+
+    // Hide previous section text
+    const prevSection = sectionsRef.current[prevIndex]
+    if (prevSection) {
+      const prevContent = prevSection.querySelector('.reveal-text')
+      if (prevContent) {
+        gsap.to(prevContent, { autoAlpha: 0, y: -20, duration: 0.3, ease: 'power2.in' })
+      }
+    }
+
+    // Slide to new section
+    gsap.to(wrapperRef.current, {
+      y: -index * window.innerHeight,
+      duration: 1,
+      ease: 'power3.inOut',
+      onComplete: () => {
+        isAnimating.current = false
+      }
     })
 
-    function raf(time: number) {
-      lenis.raf(time)
-      ScrollTrigger.update() // Sync GSAP with Lenis
-      requestAnimationFrame(raf)
+    // Reveal new section text
+    const section = sectionsRef.current[index]
+    if (section) {
+      const content = section.querySelector('.reveal-text')
+      if (content) {
+        gsap.fromTo(content,
+          { y: 40, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 0.8, delay: 0.5, ease: 'power3.out' }
+        )
+      }
     }
-    requestAnimationFrame(raf)
+  }, [totalSections])
 
-    lenis.stop()
+  // Delayed UI reveal
+  useEffect(() => {
     document.body.style.overflow = 'hidden'
 
     const timer = setTimeout(() => {
       setShowUI(true)
-      document.body.style.overflow = 'auto'
-      lenis.start()
     }, 4000)
 
-    return () => {
-      clearTimeout(timer)
-      lenis.destroy()
-    }
+    return () => clearTimeout(timer)
   }, [])
 
+  // Wheel / touch / keyboard handlers — one event = one section
+  useEffect(() => {
+    if (!showUI) return
+
+    let touchStartY = 0
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      if (isAnimating.current) return
+
+      if (e.deltaY > 0) {
+        goToSection(currentSection.current + 1)
+      } else if (e.deltaY < 0) {
+        goToSection(currentSection.current - 1)
+      }
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY
+    }
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (isAnimating.current) return
+      const deltaY = touchStartY - e.changedTouches[0].clientY
+      const threshold = 50
+
+      if (deltaY > threshold) {
+        goToSection(currentSection.current + 1)
+      } else if (deltaY < -threshold) {
+        goToSection(currentSection.current - 1)
+      }
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isAnimating.current) return
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault()
+        goToSection(currentSection.current + 1)
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault()
+        goToSection(currentSection.current - 1)
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false })
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchend', handleTouchEnd, { passive: true })
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchend', handleTouchEnd)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [showUI, goToSection])
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (wrapperRef.current) {
+        gsap.set(wrapperRef.current, {
+          y: -currentSection.current * window.innerHeight
+        })
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Collect section refs
+  const addSectionRef = useCallback((el: HTMLElement | null, index: number) => {
+    if (el) sectionsRef.current[index] = el
+  }, [])
+
+  // On showUI: hide all section texts, then reveal hero (section 0)
   useGSAP(() => {
-    if (!showUI) return;
-    
-    gsap.utils.toArray('.reveal-text').forEach((element: any) => {
-      gsap.fromTo(element, 
-        { y: 60, autoAlpha: 0 },
-        {
-          y: 0, 
-          autoAlpha: 1, 
-          duration: 1.2, 
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: element,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse'
-          }
-        }
-      )
+    if (!showUI) return
+
+    // Hide all reveal-text elements
+    gsap.utils.toArray<HTMLElement>('.reveal-text').forEach((el) => {
+      gsap.set(el, { autoAlpha: 0, y: 40 })
     })
+
+    // Reveal hero section text
+    const hero = sectionsRef.current[0]
+    if (hero) {
+      const content = hero.querySelector('.reveal-text')
+      if (content) {
+        gsap.to(content, { autoAlpha: 1, y: 0, duration: 1, delay: 0.2, ease: 'power3.out' })
+      }
+    }
   }, [showUI])
 
   return (
     <>
       <div className="canvas-container">
-        <Canvas
-          shadows
-          camera={{ position: [0, 5, 15], fov: 45 }}
-        >
+        <Canvas camera={{ position: [0, 5, 15], fov: 45 }}>
           <Scene />
         </Canvas>
       </div>
 
-      <main className="content-wrapper">
-        <section className="hero-section">
-          {/* Navbar Filler */}
-          <nav className={`navbar ${showUI ? 'fade-in' : 'hidden'}`}>
-            <div className="logo">NEFUEN</div>
+      {/* Fixed UI — stays on top of everything */}
+      {showUI && (
+        <>
+          <nav className="navbar fade-in">
+            <div className="logo"><img src="/logo_notext.png" alt="Nefuen Trading" /></div>
             <div className="nav-links">
-              <a href="#home">Inicio</a>
-              <a href="#services">Servicios</a>
-              <a href="#about">Nosotros</a>
-              <a href="#contact">Contacto</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); goToSection(0) }}>Inicio</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); goToSection(1) }}>Servicios</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); goToSection(2) }}>Nosotros</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); goToSection(3) }}>Contacto</a>
             </div>
           </nav>
 
-          {/* Certification Badges — bottom right */}
+          <div className="section-dots">
+            {Array.from({ length: totalSections }).map((_, i) => (
+              <button
+                key={i}
+                className={`dot ${currentSection.current === i ? 'active' : ''}`}
+                onClick={() => goToSection(i)}
+                aria-label={`Go to section ${i + 1}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      <div className="fullpage-wrapper" ref={wrapperRef}>
+        {/* Section 0 — Hero */}
+        <section className="fullpage-section" ref={(el) => addSectionRef(el, 0)}>
           <div className={`cert-badges ${showUI ? 'fade-in' : 'hidden'}`}>
             <img src="/brc-food.png" alt="BRC Food Certificated" />
             <img src="/globalgap.png" alt="Global G.A.P." />
           </div>
 
-          {/* Hero Overlay */}
           <div className={`hero-overlay ${showUI ? 'fade-in' : 'hidden'}`}>
             <div className="hero-content reveal-text">
               <p className="subtitle">NEFUEN TRADING</p>
               <h1>NEFUEN TRADING</h1>
               <p className="description">HAZELNUTS FROM NORTH PATAGONIA</p>
-              <button className="cta-button">OUR SERVICES</button>
+              <button className="cta-button" onClick={() => goToSection(1)}>OUR SERVICES</button>
             </div>
           </div>
         </section>
 
-        {showUI && (
-          <>
-            {/* Section 1 */}
-            <section className="next-section right">
-              <div className="content reveal-text">
-                <h2>Cosecha Premium</h2>
-                <p>Nuestras avellanas son seleccionadas a mano, garantizando el mejor calibre y sabor del mercado global. Un estándar de excelencia sin compromisos.</p>
-              </div>
-            </section>
-            
-            {/* Section 2 */}
-            <section className="next-section left">
-              <div className="content reveal-text">
-                <h2>Procesos Sostenibles</h2>
-                <p>Implementamos agricultura de precisión y utilizamos energía 100% limpia para reducir al máximo nuestra huella de carbono, protegiendo el ecosistema nativo.</p>
-              </div>
-            </section>
-            
-            {/* Section 3 */}
-            <section className="next-section center">
-              <div className="content reveal-text">
-                <h2 style={{ fontSize: '4rem', marginBottom: '20px' }}>Alcance Global</h2>
-                <p style={{ fontSize: '1.25rem', color: '#666', marginBottom: '40px' }}>Desde los fértiles valles del sur de Chile hasta los paladares y mercados más exigentes de Europa, Asia y Norteamérica.</p>
-                <button className="cta-button">CONTÁCTANOS</button>
-              </div>
-            </section>
-          </>
-        )}
-      </main>
+        {/* Section 1 */}
+        <section className="fullpage-section" ref={(el) => addSectionRef(el, 1)}>
+          <div className="section-content right">
+            <div className="content reveal-text">
+              <h2>Cosecha Premium</h2>
+              <p>Nuestras avellanas son seleccionadas a mano, garantizando el mejor calibre y sabor del mercado global. Un estándar de excelencia sin compromisos.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2 */}
+        <section className="fullpage-section" ref={(el) => addSectionRef(el, 2)}>
+          <div className="section-content left">
+            <div className="content reveal-text">
+              <h2>Procesos Sostenibles</h2>
+              <p>Implementamos agricultura de precisión y utilizamos energía 100% limpia para reducir al máximo nuestra huella de carbono, protegiendo el ecosistema nativo.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 3 */}
+        <section className="fullpage-section" ref={(el) => addSectionRef(el, 3)}>
+          <div className="section-content bottom-center">
+            <div className="content reveal-text">
+              <h2>Alcance Global</h2>
+              <p>Desde los fértiles valles del sur de Chile hasta los paladares y mercados más exigentes de Europa, Asia y Norteamérica.</p>
+              <button className="cta-button" onClick={() => goToSection(0)}>CONTÁCTANOS</button>
+            </div>
+          </div>
+        </section>
+      </div>
     </>
   )
 }

@@ -1,32 +1,30 @@
-import { useState, useEffect } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useState, useEffect, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import Hazelnut from './Hazelnut'
 import Floor from './Floor'
 import { Environment } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
 
-// Fixes PCFSoftShadowMap deprecation warning — must be set from inside Canvas context
-function ShadowConfig() {
-  const { gl } = useThree()
-  useEffect(() => {
-    gl.shadowMap.type = THREE.PCFShadowMap
-  }, [gl])
-  return null
-}
+// Shared progress value — updated by App via window event
+let targetProgress = 0
+window.addEventListener('section-change', ((e: CustomEvent) => {
+  targetProgress = e.detail.progress
+}) as EventListener)
 
 function CameraRig() {
-  useFrame((state) => {
-    const scrollY = window.scrollY
-    const maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight)
-    const progress = Math.min(scrollY / maxScroll, 1)
+  const progressRef = useRef(0)
 
-    const isMobile = window.innerWidth < 768;
+  useFrame((state, delta) => {
+    // Smoothly interpolate toward target (silky camera movement)
+    progressRef.current += (targetProgress - progressRef.current) * Math.min(delta * 3, 1)
+    const progress = progressRef.current
 
-    let angle, radius, y, lookX, lookY;
-    
+    const isMobile = window.innerWidth < 768
+
+    let angle, radius, y, lookX, lookY
+
     if (progress < 0.333) {
-      // Hero to Section 1
       const t = progress / 0.333
       const ease = t * t * (3 - 2 * t)
       angle = THREE.MathUtils.lerp(0, Math.PI * 0.5, ease)
@@ -35,7 +33,6 @@ function CameraRig() {
       lookX = THREE.MathUtils.lerp(0, isMobile ? 0 : 3, ease)
       lookY = THREE.MathUtils.lerp(0, isMobile ? 2 : 0, ease)
     } else if (progress < 0.666) {
-      // Section 1 to Section 2
       const t = (progress - 0.333) / 0.333
       const ease = t * t * (3 - 2 * t)
       angle = THREE.MathUtils.lerp(Math.PI * 0.5, Math.PI, ease)
@@ -44,7 +41,6 @@ function CameraRig() {
       lookX = THREE.MathUtils.lerp(isMobile ? 0 : 3, isMobile ? 0 : -3, ease)
       lookY = THREE.MathUtils.lerp(isMobile ? 2 : 0, isMobile ? 2 : 0, ease)
     } else {
-      // Section 2 to Section 3
       const t = (progress - 0.666) / 0.334
       const ease = t * t * (3 - 2 * t)
       angle = THREE.MathUtils.lerp(Math.PI, Math.PI * 1.5, ease)
@@ -57,14 +53,14 @@ function CameraRig() {
     state.camera.position.x = Math.sin(angle) * radius
     state.camera.position.z = Math.cos(angle) * radius
     state.camera.position.y = y
-    
+
     state.camera.lookAt(lookX, lookY, 0)
   })
   return null
 }
 
 export default function Scene() {
-  const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; type: 'kernel' | 'inshell' }[]>([])
+  const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; type: 'kernel' | 'inshell'; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null
@@ -77,7 +73,9 @@ export default function Scene() {
           {
             id: Date.now(),
             position: [(Math.random() - 0.5) * 4, 10 + Math.random() * 2, (Math.random() - 0.5) * 4] as [number, number, number],
-            type: typeMix
+            type: typeMix,
+            rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
+            angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
           }
         ].slice(-100)
       })
@@ -109,21 +107,12 @@ export default function Scene() {
   return (
     <>
       <CameraRig />
-      <ShadowConfig />
       <color attach="background" args={['#ffffff']} />
       <fog attach="fog" args={['#ffffff', 10, 40]} />
-      
-      <directionalLight 
-        castShadow 
-        position={[4, 10, 2]} 
-        intensity={2.8} 
-        shadow-mapSize={[4096, 4096]} 
-        shadow-camera-far={20}
-        shadow-camera-left={-6}
-        shadow-camera-right={6}
-        shadow-camera-top={6}
-        shadow-camera-bottom={-6}
-        shadow-bias={-0.0001}
+
+      <directionalLight
+        position={[4, 10, 2]}
+        intensity={2.8}
       />
 
       <Environment preset="studio" />
@@ -131,7 +120,7 @@ export default function Scene() {
       <Physics>
         <Floor />
         {hazelnuts.map((nut) => (
-          <Hazelnut key={nut.id} position={nut.position} type={nut.type} />
+          <Hazelnut key={nut.id} position={nut.position} type={nut.type} rotation={nut.rotation} angularVelocity={nut.angVel} />
         ))}
       </Physics>
     </>
