@@ -211,9 +211,9 @@ export default function Hazelnut({ position, type = 'kernel', rotation = [0, 0, 
         y = THREE.MathUtils.lerp(position[1], 0.6, ease)
         z = THREE.MathUtils.lerp(position[2], -1.4, ease)
         
-        // Rotate only on the Y axis continuously
+        // Rotate only on the Y axis continuously using elapsedTime additively to prevent unwinding on reverse scroll
         rotX = THREE.MathUtils.lerp(rotation[0], 0, ease)
-        rotY = THREE.MathUtils.lerp(rotation[1], state.clock.elapsedTime * 0.5, ease)
+        rotY = THREE.MathUtils.lerp(rotation[1], 0, ease) + state.clock.elapsedTime * 0.5
         rotZ = THREE.MathUtils.lerp(rotation[2], 0, ease)
       } else {
         scale = 3.0
