@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react'
 
 function App() {
   const [showUI, setShowUI] = useState(false)
+  const [activeSection, setActiveSection] = useState(0)
   const currentSection = useRef(0)
   const isAnimating = useRef(false)
   const sectionsRef = useRef<HTMLElement[]>([])
@@ -22,6 +23,7 @@ function App() {
     const prevIndex = currentSection.current
     isAnimating.current = true
     currentSection.current = index
+    setActiveSection(index)
 
     // Notify 3D scene of section change (progress 0–1)
     const progress = index / (totalSections - 1)
@@ -189,7 +191,7 @@ function App() {
             {Array.from({ length: totalSections }).map((_, i) => (
               <button
                 key={i}
-                className={`dot ${currentSection.current === i ? 'active' : ''}`}
+                className={`dot ${activeSection === i ? 'active' : ''}`}
                 onClick={() => goToSection(i)}
                 aria-label={`Go to section ${i + 1}`}
               />
