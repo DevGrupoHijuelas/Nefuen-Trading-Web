@@ -220,21 +220,18 @@ function App() {
         <section className="fullpage-section" ref={(el) => addSectionRef(el, 1)}>
           <div className="section-content left">
             <div className="content reveal-text tech-specs">
-              <div className="spec-header">
-                <span className="spec-subtitle" style={{ fontSize: '1rem' }}>01</span>
-              </div>
-              <h2 className="spec-title">LIMPIEZA Y<br/>SECADO</h2>
+              <h2 className="spec-title" style={{ fontSize: 'clamp(2.5rem, 4vw, 4rem)' }}>
+                SERVICIOS<br/>ASOCIADOS
+              </h2>
               
               <div className="spec-divider"></div>
               
-              <div className="spec-block">
-                <p>Recibimos el fruto desde haciendas certificadas. Pesaje, muestreo y análisis de humedad garantizan trazabilidad total.</p>
-                <ul className="spec-list">
-                  <li>Control peso y humedad</li>
-                  <li>Muestras trazables</li>
-                  <li>Asignación de lote</li>
-                </ul>
-              </div>
+              <ul className="spec-list services-list">
+                <li><span className="service-number">1-</span> Limpieza y secado</li>
+                <li><span className="service-number">2-</span> Descascarado</li>
+                <li><span className="service-number">3-</span> Exportación</li>
+                <li><span className="service-number">4-</span> Valor Agregado</li>
+              </ul>
             </div>
           </div>
         </section>
