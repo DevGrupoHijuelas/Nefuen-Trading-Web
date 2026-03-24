@@ -625,7 +625,7 @@ body {
 .transition-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(10, 8, 5, 0.95) 0%, rgba(18, 28, 14, 0.92) 100%);
+  background: #0a0c08;
   display: flex;
   align-items: center;
   z-index: 10;
@@ -669,17 +669,85 @@ body {
 }
 
 /* ═══════════════════════════════════════
-   FRAME SEQUENCE (Section 3)
+   FRAME SEQUENCE (Section 3) — split layout
    ═══════════════════════════════════════ */
 
-.frame-sequence-container {
+/* Outer container: full-screen, dark bg, flex row */
+.frame-layout {
   position: absolute;
   inset: 0;
-  background: #000;
-  z-index: 10;
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  background: #ffffff;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* LEFT: parallax text gallery */
+.frame-left-col {
+  width: 42%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: #ffffff;
+  z-index: 12;
+}
+
+.frame-text-track {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* JS drives translateY for the parallax scroll */
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.frame-text-item {
+  flex-shrink: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  padding: 0 10% 0 8%;
+}
+
+.frame-text-label {
+  color: var(--green-accent);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 16px 0;
+}
+
+.frame-text-heading {
+  font-family: var(--font-heading);
+  font-size: clamp(2.8rem, 3.5vw, 5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin: 0 0 24px 0;
+}
+
+.frame-text-body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 340px;
+}
+
+/* RIGHT: animation panel — no gradient, no overlay */
+.frame-right-col {
+  width: 58%;
+  height: 100%;
+  position: relative;
   overflow: hidden;
 }
 
@@ -690,15 +758,17 @@ body {
   display: block;
   user-select: none;
   pointer-events: none;
+  mix-blend-mode: multiply;
 }
 
+/* Progress bar — spans full width at the very bottom */
 .frame-progress-bar {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 3px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.08);
   z-index: 20;
 }
 
@@ -708,14 +778,15 @@ body {
   transition: width 0.1s linear;
 }
 
+/* Scroll hint — bottom center at last frame */
 .frame-scroll-hint {
   position: absolute;
-  bottom: 24px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.5);
   font-family: var(--font-heading);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   animation: pulse 1.5s ease-in-out infinite;
@@ -723,7 +794,28 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
-  50% { opacity: 1; transform: translateX(-50%) translateY(4px); }
+  0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+  50%       { opacity: 1;   transform: translateX(-50%) translateY(5px); }
 }
 
+/* Mobile: stack vertically */
+@media (max-width: 768px) {
+  .frame-layout {
+    flex-direction: column;
+  }
+  .frame-left-col {
+    width: 100%;
+    height: 45%;
+  }
+  .frame-right-col {
+    width: 100%;
+    height: 55%;
+  }
+  .frame-text-item {
+    height: 45vh;
+    padding: 0 5%;
+  }
+  .frame-text-heading {
+    font-size: clamp(1.8rem, 7vw, 2.8rem);
+  }
+}
