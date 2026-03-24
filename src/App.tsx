@@ -58,10 +58,11 @@ function App() {
       }
     }
 
-    // Slide to new section
+    // Slide to new section — instant when entering frame animation section to avoid snap feel
+    const isEnteringFrames = prevIndex === 2 && index === 3
     gsap.to(wrapperRef.current, {
       y: -index * window.innerHeight,
-      duration: 1,
+      duration: isEnteringFrames ? 0 : 1,
       ease: 'power3.inOut',
       onComplete: () => {
         isAnimating.current = false
