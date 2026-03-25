@@ -69,16 +69,6 @@ export default function FrameSequence() {
           </div>
         </div>
       ))}
-
-      {/* Spacer to require a deliberate scroll-past to exit the gallery */}
-      <div 
-        style={{ 
-          height: '40vh', 
-          width: '100%', 
-          flexShrink: 0,
-          scrollSnapAlign: 'end'
-        }} 
-      />
     </div>
     </div>
   )
