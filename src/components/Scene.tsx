@@ -5,6 +5,7 @@ import Hazelnut from './Hazelnut'
 import Floor from './Floor'
 import HeroFallingNuts from './HeroFallingNuts'
 import GalleryFallingNuts from './GalleryFallingNuts'
+import FinalFallingNuts from './FinalFallingNuts'
 import { Environment } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
 
@@ -63,31 +64,6 @@ function CameraRig() {
   return null
 }
 
-const FINAL_NUTS = Array.from({ length: 55 }, (_, i) => {
-  // Final camera looks down from y=8 at origin. Nuts need to be on the XZ plane near y=0.
-  const angle = Math.random() * Math.PI * 2
-  const radius = 1 + Math.random() * 6
-  const targetX = Math.cos(angle) * radius
-  const targetZ = Math.sin(angle) * radius
-  const targetY = -1 + Math.random() * 2  // Slight vertical variation
-
-  // Start positions: fly in from far off-screen on the XZ plane  
-  const startAngle = angle + (Math.random() - 0.5) * 0.5
-  const startRadius = 25 + Math.random() * 15
-  const startX = Math.cos(startAngle) * startRadius
-  const startZ = Math.sin(startAngle) * startRadius
-  const startY = -3 + Math.random() * 6
-
-  return {
-    id: i,
-    type: Math.random() > 0.5 ? 'kernel' : 'inshell',
-    target: [targetX, targetY, targetZ],
-    start: [startX, startY, startZ],
-    rotOffset: [Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI],
-    rotSpeed: [(Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4]
-  }
-})
-
 export default function Scene({ onLoaded }: { onLoaded?: () => void }) {
   useEffect(() => {
     if (onLoaded) onLoaded()
@@ -107,21 +83,11 @@ export default function Scene({ onLoaded }: { onLoaded?: () => void }) {
       <Environment preset="studio" />
 
       <Hazelnut position={[0, 0, 0]} isHero={true} type="inshell" />
-      {FINAL_NUTS.map((nut) => (
-        <Hazelnut 
-          key={`final-${nut.id}`} 
-          isFinalHero={true} 
-          type={nut.type as 'kernel' | 'inshell'} 
-          position={nut.start as [number,number,number]} 
-          targetPosition={nut.target as [number,number,number]}
-          rotOffset={nut.rotOffset as [number,number,number]}
-          rotSpeed={nut.rotSpeed as [number,number,number]}
-        />
-      ))}
       <Physics>
         <Floor />
         <HeroFallingNuts />
         <GalleryFallingNuts />
+        <FinalFallingNuts />
       </Physics>
     </>
   )
