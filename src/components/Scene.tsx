@@ -61,10 +61,11 @@ function CameraRig() {
   return null
 }
 
-export default function Scene() {
+export default function Scene({ onLoaded }: { onLoaded?: () => void }) {
   const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; type: 'kernel' | 'inshell'; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
 
   useEffect(() => {
+    if (onLoaded) onLoaded()
     let interval: ReturnType<typeof setInterval> | null = null
 
     const spawnNut = () => {

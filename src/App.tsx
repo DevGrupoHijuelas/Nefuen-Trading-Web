@@ -21,6 +21,7 @@ const SECTION_PROGRESS: Record<number, number> = {
 
 function App() {
   const [showUI, setShowUI] = useState(false)
+  const [sceneLoaded, setSceneLoaded] = useState(false)
   const [activeSection, setActiveSection] = useState(0)
   const [frameIndex, setFrameIndex] = useState(0)
   const currentSection = useRef(0)
@@ -81,16 +82,18 @@ function App() {
     }
   }, [])
 
-  // Delayed UI reveal
+  // Delayed UI reveal (Wait for scene to load, then wait 4s buffer)
   useEffect(() => {
     document.body.style.overflow = 'hidden'
+
+    if (!sceneLoaded) return
 
     const timer = setTimeout(() => {
       setShowUI(true)
     }, 4000)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [sceneLoaded])
 
   // Wheel / touch / keyboard handlers
   useEffect(() => {
@@ -209,7 +212,7 @@ function App() {
     <>
       <div className="canvas-container">
         <Canvas camera={{ position: [0, 5, 15], fov: 45 }}>
-          <Scene />
+          <Scene onLoaded={() => setSceneLoaded(true)} />
         </Canvas>
       </div>
 
