@@ -27,6 +27,7 @@ function App() {
   const scrollLockAt = useRef(0)
   const sectionsRef = useRef<HTMLElement[]>([])
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const galleryBoundaryAt = useRef(0)
 
   // Use visual viewport height to account for iOS browser chrome
   const getVH = useCallback(() => {
@@ -132,9 +133,23 @@ function App() {
         const scrollContainer = document.querySelector('.gallery-scroll-container')
         if (scrollContainer) {
           const { scrollTop, scrollHeight, clientHeight } = scrollContainer
-          // Allow native scroll if not at absolute boundaries
-          if (e.deltaY > 0 && Math.abs((scrollTop + clientHeight) - scrollHeight) > 2) return
-          if (e.deltaY < 0 && scrollTop > 2) return
+          const isAtBottom = Math.abs((scrollTop + clientHeight) - scrollHeight) <= 2
+          const isAtTop = scrollTop <= 2
+
+          // Allow native scroll if not at boundaries, reset boundary timer
+          if (e.deltaY > 0 && !isAtBottom) { galleryBoundaryAt.current = 0; return }
+          if (e.deltaY < 0 && !isAtTop) { galleryBoundaryAt.current = 0; return }
+
+          // At boundary: must dwell for 600ms before allowing section transition
+          const now = Date.now()
+          if (galleryBoundaryAt.current === 0) {
+            galleryBoundaryAt.current = now
+          }
+          if (now - galleryBoundaryAt.current < 600) {
+            e.preventDefault()
+            return
+          }
+          galleryBoundaryAt.current = 0
         }
       }
 
@@ -183,15 +198,27 @@ function App() {
         const scrollContainer = document.querySelector('.gallery-scroll-container')
         if (scrollContainer) {
           const { scrollTop, scrollHeight, clientHeight } = scrollContainer
-          
+
           // Relaxed tolerance (15px) to handle mobile sub-pixel rendering and bounce
           const isAtTop = scrollTop <= 15
           const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
-          
-          // If swiping up but NOT near bottom, stay in gallery
-          if (deltaY > threshold && !isAtBottom) return
-          // If swiping down but NOT near top, stay in gallery
-          if (deltaY < -threshold && !isAtTop) return
+
+          // If swiping up but NOT near bottom, stay in gallery and reset boundary timer
+          if (deltaY > threshold && !isAtBottom) { galleryBoundaryAt.current = 0; return }
+          // If swiping down but NOT near top, stay in gallery and reset boundary timer
+          if (deltaY < -threshold && !isAtTop) { galleryBoundaryAt.current = 0; return }
+
+          // At boundary: require a deliberate second swipe to leave gallery
+          if ((deltaY > threshold && isAtBottom) || (deltaY < -threshold && isAtTop)) {
+            const now = Date.now()
+            if (galleryBoundaryAt.current === 0) {
+              galleryBoundaryAt.current = now
+              return
+            }
+            // Must wait at least 300ms between boundary swipes
+            if (now - galleryBoundaryAt.current < 300) return
+            galleryBoundaryAt.current = 0
+          }
         }
       }
 

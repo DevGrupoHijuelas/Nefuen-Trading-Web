@@ -41,13 +41,15 @@ export default function FrameSequence() {
       <div 
         className="gallery-scroll-container" 
         ref={containerRef}
-      style={{ 
-        height: '100%', 
-        width: '100%', 
-        overflowY: 'auto', 
+      style={{
+        height: '100%',
+        width: '100%',
+        overflowY: 'auto',
         overflowX: 'hidden',
         background: 'transparent',
-        scrollSnapType: 'y mandatory'
+        scrollSnapType: 'y mandatory',
+        overscrollBehavior: 'contain',
+        WebkitOverflowScrolling: 'touch',
       }}
     >
       <div style={{ pointerEvents: 'none', position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 100%)', zIndex: -1 }} />
