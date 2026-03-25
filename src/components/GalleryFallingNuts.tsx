@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useFrame } from '@react-three/fiber'
 import Hazelnut from './Hazelnut'
+import { cameraProgress } from './Scene'
 
 export default function GalleryFallingNuts() {
   const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; type: 'kernel' | 'inshell'; rotation: [number, number, number]; angVel: [number, number, number]; gravityScale: number; linearDamping: number }[]>([])
@@ -23,20 +25,23 @@ export default function GalleryFallingNuts() {
     const spawnLoop = () => {
       if (!isActive) return
       
-      setHazelnuts((prev) => {
-        return [
-          ...prev,
-          {
-            id: Date.now() + Math.random(),
-            position: [(Math.random() - 0.5) * 20, 10 + Math.random() * 5, (Math.random() - 0.5) * 8] as [number, number, number],
-            type: (Math.random() > 0.5 ? 'kernel' : 'inshell') as 'kernel' | 'inshell',
-            rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
-            angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
-            gravityScale: 0.05 + Math.random() * 0.15,
-            linearDamping: 0.5 + Math.random() * 1.5,
-          }
-        ].slice(-150)
-      })
+      const p = cameraProgress.current
+      if (p > 0.35 && p < 0.65) {
+        setHazelnuts((prev) => {
+          return [
+            ...prev,
+            {
+              id: Date.now() + Math.random(),
+              position: [(Math.random() - 0.5) * 20, 10 + Math.random() * 5, (Math.random() - 0.5) * 8] as [number, number, number],
+              type: (Math.random() > 0.5 ? 'kernel' : 'inshell') as 'kernel' | 'inshell',
+              rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
+              angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
+              gravityScale: 0.05 + Math.random() * 0.15,
+              linearDamping: 0.5 + Math.random() * 1.5,
+            }
+          ].slice(-150)
+        })
+      }
       timeout = setTimeout(spawnLoop, 150)
     }
 
@@ -54,6 +59,14 @@ export default function GalleryFallingNuts() {
       document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [])
+
+  // Clear array aggressively to save memory when completely out of view
+  useFrame(() => {
+    const p = cameraProgress.current
+    if ((p < 0.25 || p > 0.75) && hazelnuts.length > 0) {
+      setHazelnuts([])
+    }
+  })
 
   return (
     <>

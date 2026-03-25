@@ -82,10 +82,10 @@ export default function Scene({ onLoaded }: { onLoaded?: () => void }) {
       <Environment preset="studio" />
 
       <Hazelnut position={[0, 0, 0]} isHero={true} type="inshell" />
-      <Hazelnut position={[0, 0, -4.5]} isFinalHero={true} type="kernel" />
-      <Hazelnut position={[0, 0, -1.5]} isFinalHero={true} type="kernel" />
-      <Hazelnut position={[0, 0, 1.5]} isFinalHero={true} type="kernel" />
-      <Hazelnut position={[0, 0, 4.5]} isFinalHero={true} type="kernel" />
+      <Hazelnut position={[0,0,0]} index={0} isFinalHero={true} type="kernel" />
+      <Hazelnut position={[0,0,0]} index={1} isFinalHero={true} type="kernel" />
+      <Hazelnut position={[0,0,0]} index={2} isFinalHero={true} type="kernel" />
+      <Hazelnut position={[0,0,0]} index={3} isFinalHero={true} type="kernel" />
       <Physics>
         <Floor />
         <HeroFallingNuts />

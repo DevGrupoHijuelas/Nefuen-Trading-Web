@@ -124,6 +124,7 @@ interface HazelnutProps {
   mode?: 'heroFalling' | 'galleryFalling'
   sensor?: boolean
   castShadow?: boolean
+  index?: number
 }
 
 export default function Hazelnut({ 
@@ -137,7 +138,8 @@ export default function Hazelnut({
   linearDamping = 0,
   mode,
   sensor = false,
-  castShadow = true
+  castShadow = true,
+  index
 }: HazelnutProps) {
   const rigidBodyRef = useRef<any>(null)
   const meshGroupRef = useRef<THREE.Group>(null)
@@ -247,28 +249,63 @@ export default function Hazelnut({
       meshGroupRef.current.scale.setScalar(scale)
       meshGroupRef.current.position.set(x, y, z)
       meshGroupRef.current.rotation.set(rotX, rotY, rotZ)
-    } else if (isFinalHero) {
+    } else if (isFinalHero && index !== undefined) {
       let scale = 0
-      let z = position[2]
+      
+      // Target composition: [X (depth), Y (height), Z (horizontal)]
+      const targets = [
+        [0, -2.5, -4.5],  // Far left
+        [-2.5, -3.5, -1.8], // Center left, forward and low
+        [-1.5, -2.0, 1.8],  // Center right, forward and high
+        [1, -3.0, 4.5]    // Far right
+      ]
+      
+      // Enter from all off-screen directions
+      const starts = [
+        [0, 12, -14],    // Drops from top left
+        [0, -12, -10],   // Sweeps from bottom left
+        [0, 12, 10],     // Drops from top right
+        [0, -12, 14]     // Sweeps from bottom right
+      ]
+
+      const target = targets[index]
+      const start = starts[index]
+      
+      let x = start[0], y = start[1], z = start[2]
+      let rotX = 0, rotY = 0, rotZ = 0
 
       const currentProgress = cameraProgress.current
 
       if (currentProgress > 0.6) {
-         const t = Math.max(0, Math.min(1, (currentProgress - 0.6) / 0.4))
-         scale = THREE.MathUtils.lerp(0, 3.0, t)
-         z = THREE.MathUtils.lerp(position[2] * 4, position[2], t)
+         const tRaw = Math.max(0, Math.min(1, (currentProgress - 0.6) / 0.4))
+         // Premium ease-out cubic
+         const t = 1 - Math.pow(1 - tRaw, 3)
+         scale = THREE.MathUtils.lerp(0, 3.5 + (index===1||index===2 ? 1.0 : 0), t)
+         
+         x = THREE.MathUtils.lerp(start[0], target[0], t)
+         y = THREE.MathUtils.lerp(start[1], target[1], t)
+         z = THREE.MathUtils.lerp(start[2], target[2], t)
+
+         rotX = THREE.MathUtils.lerp(Math.PI * (index % 2 === 0 ? 2 : -2), 0, t) + state.clock.elapsedTime * 0.15
+         rotY = THREE.MathUtils.lerp(Math.PI * 2, 0, t) + state.clock.elapsedTime * (index===1?-0.2:0.2)
+         rotZ = THREE.MathUtils.lerp(Math.PI, 0, t) + state.clock.elapsedTime * 0.1
       }
 
       meshGroupRef.current.scale.setScalar(scale)
-      meshGroupRef.current.position.set(position[0], position[1], z)
-      meshGroupRef.current.rotation.set(0, state.clock.elapsedTime * 0.8, 0)
+      meshGroupRef.current.position.set(x, y, z)
+      meshGroupRef.current.rotation.set(rotX, rotY, rotZ)
     } else if (mode === 'heroFalling') {
       const p = cameraProgress.current
       const shrinkFactor = p < 0.2 ? Math.max(0, 1 - p * 5) : 0
       meshGroupRef.current.scale.setScalar(shrinkFactor)
     } else if (mode === 'galleryFalling') {
       const p = cameraProgress.current
-      const shrinkFactor = p > 0.4 ? THREE.MathUtils.lerp(0, 0.5, Math.min(1, (p - 0.4) * 10)) : 0
+      let shrinkFactor = 0
+      if (p > 0.4 && p < 0.6) {
+        shrinkFactor = THREE.MathUtils.lerp(0, 0.5, Math.min(1, (p - 0.4) * 10))
+      } else if (p >= 0.6) {
+        shrinkFactor = THREE.MathUtils.lerp(0.5, 0, Math.min(1, (p - 0.6) * 10))
+      }
       meshGroupRef.current.scale.setScalar(shrinkFactor)
     } else {
       meshGroupRef.current.scale.setScalar(0)
