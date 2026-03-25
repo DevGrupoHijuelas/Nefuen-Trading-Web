@@ -28,6 +28,11 @@ function App() {
   const sectionsRef = useRef<HTMLElement[]>([])
   const wrapperRef = useRef<HTMLDivElement>(null)
 
+  // Use visual viewport height to account for iOS browser chrome
+  const getVH = useCallback(() => {
+    return window.visualViewport ? window.visualViewport.height : window.innerHeight
+  }, [])
+
   // Navigate to a specific section
   const goToSection = useCallback((index: number) => {
     if (index < 0 || index >= TOTAL_SECTIONS) return
@@ -65,9 +70,10 @@ function App() {
       }
     }
 
-    // Slide to new section
+    // Slide to new section using visual viewport height
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight
     gsap.to(wrapperRef.current, {
-      y: -index * window.innerHeight,
+      y: -index * vh,
       duration: 1,
       ease: 'power3.inOut',
       onComplete: () => {
@@ -87,7 +93,7 @@ function App() {
         )
       }
     }
-  }, [])
+  }, [getVH])
 
   // Delayed UI reveal (Wait for scene to load, then wait 4s buffer)
   useEffect(() => {
@@ -107,6 +113,7 @@ function App() {
     if (!showUI) return
 
     let touchStartY = 0
+    let touchCurrentY = 0
 
     const handleScroll = (direction: 'down' | 'up') => {
       // Prevent trackpad inertia and double triggers:
@@ -136,12 +143,40 @@ function App() {
       else if (e.deltaY < 0) handleScroll('up')
     }
 
+
+
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY
+      touchCurrentY = touchStartY
     }
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      const deltaY = touchStartY - e.changedTouches[0].clientY
+    const handleTouchMove = (e: TouchEvent) => {
+      touchCurrentY = e.touches[0].clientY
+      
+      // Block native page scroll — we handle navigation ourselves
+      // Only allow native scroll inside the gallery (Section 3) if not at boundaries
+      if (currentSection.current !== 3) {
+        if (e.cancelable) e.preventDefault()
+      } else {
+        const scrollContainer = document.querySelector('.gallery-scroll-container')
+        if (!scrollContainer) {
+          if (e.cancelable) e.preventDefault()
+          return
+        }
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainer
+        const delta = touchStartY - touchCurrentY
+        
+        // If at top and swiping down, or at bottom and swiping up, block native to allow section snap
+        const isAtTop = scrollTop <= 2
+        const isAtBottom = Math.abs((scrollTop + clientHeight) - scrollHeight) <= 2
+        
+        if (delta > 0 && isAtBottom) { if (e.cancelable) e.preventDefault() }
+        if (delta < 0 && isAtTop) { if (e.cancelable) e.preventDefault() }
+      }
+    }
+
+    const handleTouchEnd = () => {
+      const deltaY = touchStartY - touchCurrentY
       const threshold = 50
 
       if (currentSection.current === 3) {
@@ -169,28 +204,35 @@ function App() {
 
     window.addEventListener('wheel', handleWheel, { passive: false })
     window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
     window.addEventListener('touchend', handleTouchEnd, { passive: true })
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
       window.removeEventListener('wheel', handleWheel)
       window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
       window.removeEventListener('touchend', handleTouchEnd)
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [showUI, goToSection])
 
-  // Handle window resize
+  // Handle window resize — use visualViewport for true mobile height
   useEffect(() => {
     const handleResize = () => {
+      const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight
       if (wrapperRef.current) {
         gsap.set(wrapperRef.current, {
-          y: -currentSection.current * window.innerHeight
+          y: -currentSection.current * vh
         })
       }
     }
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    window.visualViewport?.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      window.visualViewport?.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   // Collect section refs
