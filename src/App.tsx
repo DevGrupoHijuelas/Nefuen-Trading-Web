@@ -255,8 +255,6 @@ function App() {
           <div className={`cert-badges ${showUI ? 'fade-in' : 'hidden'}`}>
             <img src="/brc-food.png" alt="BRC Food Certificated" />
             <img src="/globalgap.png" alt="Global G.A.P." />
-            <img src="/certifications/smeta.png" alt="SMETA" />
-            <img src="/certifications/brcgs.png" alt="BRCGS" />
           </div>
 
           <div className={`hero-overlay ${showUI ? 'fade-in' : 'hidden'}`}>
@@ -272,16 +270,14 @@ function App() {
         {/* Section 1 — Services */}
         <section className="fullpage-section" ref={(el) => addSectionRef(el, 1)}>
           <div className="section-content left">
-            <div className="content reveal-text services-layout">
-              <div className="services-title">
-                <p className="subtitle" style={{ color: 'var(--green-accent)', fontFamily: 'var(--font-heading)', fontWeight: 600, letterSpacing: '0.12em', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '12px' }}>
-                  SERVICES
-                </p>
-                <h2 style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', textTransform: 'uppercase', fontWeight: 800, lineHeight: 0.9 }}>
-                  WHAT WE DO
-                </h2>
-              </div>
-              <p className="services-body" style={{ color: 'var(--text-muted)', lineHeight: 1.6, fontSize: '1.05rem', marginTop: '16px' }}>
+            <div className="content reveal-text">
+              <p className="subtitle" style={{ color: 'var(--green-accent)', fontFamily: 'var(--font-heading)', fontWeight: 600, letterSpacing: '0.12em', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '12px' }}>
+                SERVICES
+              </p>
+              <h2 style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', textTransform: 'uppercase', fontWeight: 800, lineHeight: 0.9 }}>
+                WHAT WE DO
+              </h2>
+              <p style={{ color: 'var(--text-muted)', lineHeight: 1.6, fontSize: '1.05rem', marginTop: '16px' }}>
                 We connect Chilean hazelnuts to global markets through precision processing, quality control, and export expertise.
               </p>
             </div>
