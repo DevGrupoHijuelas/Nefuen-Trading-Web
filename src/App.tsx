@@ -309,7 +309,7 @@ function App() {
 
           <div className={`hero-overlay ${showUI ? 'fade-in' : 'hidden'}`}>
             <div className="hero-content reveal-text">
-              <p className="subtitle">NEFUEN TRADING</p>
+
               <h1>NEFUEN TRADING</h1>
               <p className="description">HAZELNUTS FROM NORTH PATAGONIA</p>
               <button className="cta-button" onClick={() => goToSection(1)}>OUR SERVICES</button>
