@@ -504,12 +504,12 @@ body {
   }
 
   .cert-badges img {
-    height: 22px;
+    height: 32px;
   }
 
-  /* BRCGS logo fix: make it smaller to match the perceived scale of others */
+  /* BRCGS logo fix: keep it slightly smaller than the 32px others to balance visual weight */
   .cert-badges .cert-brcgs {
-    height: 16px;
+    height: 28px;
   }
 }
 
