@@ -536,8 +536,9 @@ body {
   }
 
   .hero-overlay {
-    padding: 18vh 5% 25vh;
-    align-items: stretch;
+    padding: 0 5%;
+    align-items: center;
+    justify-content: center;
   }
 
   .hero-content {
@@ -547,7 +548,6 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    height: 100%;
   }
 
   .hero-content h1 {
@@ -567,7 +567,7 @@ body {
   }
 
   .hero-content .cta-button {
-    margin-top: auto;
+    margin-top: 20px;
     padding: 12px 24px;
     font-size: 0.75rem;
   }
