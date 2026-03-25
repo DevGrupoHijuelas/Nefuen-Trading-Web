@@ -46,6 +46,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 0;
 }
 
@@ -59,6 +60,7 @@ body {
 .fullpage-section {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: relative;
   overflow: hidden;
 }
@@ -647,6 +649,7 @@ body {
 
 .gallery-item-wrapper {
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   display: flex;
   align-items: center;
