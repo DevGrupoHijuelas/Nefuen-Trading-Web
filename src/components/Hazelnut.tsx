@@ -260,12 +260,12 @@ export default function Hazelnut({
 
       const currentProgress = cameraProgress.current
 
-      if (currentProgress > 0.6) {
-         const tRaw = Math.max(0, Math.min(1, (currentProgress - 0.6) / 0.4))
+      if (currentProgress > 0.55) {
+         const tRaw = Math.max(0, Math.min(1, (currentProgress - 0.55) / 0.45))
          // Premium ease-out cubic
          const t = 1 - Math.pow(1 - tRaw, 3)
          
-         scale = THREE.MathUtils.lerp(0.1, 3.5, t)
+         scale = THREE.MathUtils.lerp(0, 1.5, t)
          
          x = THREE.MathUtils.lerp(position[0], targetPosition[0], t)
          y = THREE.MathUtils.lerp(position[1], targetPosition[1], t)

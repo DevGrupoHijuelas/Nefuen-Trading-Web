@@ -64,13 +64,19 @@ function CameraRig() {
 }
 
 const FINAL_NUTS = Array.from({ length: 55 }, (_, i) => {
-  const targetX = -6 + Math.random() * 8;
-  const targetY = -7 + Math.random() * 16;
-  const targetZ = -12 + Math.random() * 24;
-  
-  const startX = 0;
-  const startY = targetY > 1 ? 25 : -25;
-  const startZ = targetZ < 0 ? -30 : 30;
+  // Final camera looks down from y=8 at origin. Nuts need to be on the XZ plane near y=0.
+  const angle = Math.random() * Math.PI * 2
+  const radius = 1 + Math.random() * 6
+  const targetX = Math.cos(angle) * radius
+  const targetZ = Math.sin(angle) * radius
+  const targetY = -1 + Math.random() * 2  // Slight vertical variation
+
+  // Start positions: fly in from far off-screen on the XZ plane  
+  const startAngle = angle + (Math.random() - 0.5) * 0.5
+  const startRadius = 25 + Math.random() * 15
+  const startX = Math.cos(startAngle) * startRadius
+  const startZ = Math.sin(startAngle) * startRadius
+  const startY = -3 + Math.random() * 6
 
   return {
     id: i,
@@ -78,7 +84,7 @@ const FINAL_NUTS = Array.from({ length: 55 }, (_, i) => {
     target: [targetX, targetY, targetZ],
     start: [startX, startY, startZ],
     rotOffset: [Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI],
-    rotSpeed: [(Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.8]
+    rotSpeed: [(Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4]
   }
 })
 
