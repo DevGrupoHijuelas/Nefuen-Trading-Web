@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Canvas } from '@react-three/fiber'
 import Scene from './components/Scene'
 import FrameSequence from './components/FrameSequence'
+import CanvasErrorBoundary from './components/CanvasErrorBoundary'
 import './index.css'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -294,9 +295,11 @@ function App() {
   return (
     <>
       <div className="canvas-container">
-        <Canvas camera={{ position: [0, 5, 15], fov: 45 }}>
-          <Scene onLoaded={() => setSceneLoaded(true)} />
-        </Canvas>
+        <CanvasErrorBoundary>
+          <Canvas camera={{ position: [0, 5, 15], fov: 45 }}>
+            <Scene onLoaded={() => setSceneLoaded(true)} />
+          </Canvas>
+        </CanvasErrorBoundary>
       </div>
 
       {/* Fixed UI — stays on top of everything */}

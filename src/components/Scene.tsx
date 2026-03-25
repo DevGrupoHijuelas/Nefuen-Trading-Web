@@ -83,7 +83,7 @@ export default function Scene({ onLoaded }: { onLoaded?: () => void }) {
       <Environment preset="studio" />
 
       <Hazelnut position={[0, 0, 0]} isHero={true} type="inshell" />
-      <Physics>
+      <Physics timeStep="vary">
         <Floor />
         <HeroFallingNuts />
         <GalleryFallingNuts />

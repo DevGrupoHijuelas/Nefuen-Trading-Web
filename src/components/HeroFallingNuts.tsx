@@ -45,10 +45,10 @@ export default function HeroFallingNuts() {
     }
   }, [])
 
-  // Clear array aggressively to save memory when completely out of view
+  // Clear array when out of view — deferred to avoid Rapier concurrent access
   useFrame(() => {
     if (cameraProgress.current > 0.35 && hazelnuts.length > 0) {
-      setHazelnuts([])
+      requestAnimationFrame(() => setHazelnuts([]))
     }
   })
 

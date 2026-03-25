@@ -53,10 +53,10 @@ export default function FinalFallingNuts() {
     }
   }, [])
 
-  // Hide when in the hero section
+  // Hide when in the hero section — deferred to avoid Rapier concurrent access
   useFrame(() => {
     if (cameraProgress.current < 0.3 && hazelnuts.length > 0) {
-      setHazelnuts([])
+      requestAnimationFrame(() => setHazelnuts([]))
     }
   })
 
