@@ -26,6 +26,7 @@ function App() {
   const [frameIndex, setFrameIndex] = useState(0)
   const currentSection = useRef(0)
   const isAnimating = useRef(false)
+  const scrollLockAt = useRef(0)
   const sectionsRef = useRef<HTMLElement[]>([])
   const wrapperRef = useRef<HTMLDivElement>(null)
   const frameIndexRef = useRef(0) // keeps sync with state without closure issues
@@ -40,8 +41,16 @@ function App() {
     currentSection.current = index
     setActiveSection(index)
 
-    // Reset frame state when leaving the frames section
-    if (prevIndex === 3 && index !== 3) {
+    // Set correct starting frame when entering Section 3, or reset when leaving
+    if (index === 3) {
+      if (prevIndex > 3) {
+        setFrameIndex(TOTAL_FRAMES - 1)
+        frameIndexRef.current = TOTAL_FRAMES - 1
+      } else {
+        setFrameIndex(0)
+        frameIndexRef.current = 0
+      }
+    } else if (prevIndex === 3) {
       setFrameIndex(0)
       frameIndexRef.current = 0
     }
@@ -66,6 +75,7 @@ function App() {
       ease: 'power3.inOut',
       onComplete: () => {
         isAnimating.current = false
+        scrollLockAt.current = Date.now()
       }
     })
 
@@ -102,6 +112,10 @@ function App() {
     let touchStartY = 0
 
     const handleScroll = (direction: 'down' | 'up') => {
+      // Prevent trackpad inertia and double triggers:
+      // Ignore scroll if actively animating or if we are inside the post-animation cooldown window
+      if (isAnimating.current || Date.now() - scrollLockAt.current < 800) return
+
       // Section 3 (frames) — intercept scroll to drive frame animation
       if (currentSection.current === 3) {
         if (direction === 'down') {
@@ -125,7 +139,6 @@ function App() {
       }
 
       // Normal section navigation
-      if (isAnimating.current) return
       if (direction === 'down') {
         goToSection(currentSection.current + 1)
       } else {
