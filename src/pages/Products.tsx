@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import ArrowCTA from '../components/ArrowCTA'
 import { useTranslation } from '../i18n/LanguageContext'
@@ -53,7 +52,7 @@ function ProductSection({
         >
           {description}
         </p>
-        <ArrowCTA label={t('products.cta.button')} to="/contact" reverse={reverse} />
+        <ArrowCTA label={t('products.cta.button')} to="/contact" />
       </div>
     </div>
   )
