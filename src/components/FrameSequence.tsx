@@ -6,6 +6,7 @@ const ITEMS = [
   { label: '02', key: '02', bg: '#316838' },
   { label: '03', key: '03', bg: '#388E3C' },
   { label: '04', key: '04', bg: '#7CB342' },
+  { label: '05', key: '05', bg: '#558B2F' },
 ]
 
 export default function FrameSequence() {
