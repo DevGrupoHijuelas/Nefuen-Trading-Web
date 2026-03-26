@@ -25,7 +25,7 @@ export default function Navbar({ visible = true }: NavbarProps) {
           className="lang-toggle"
           onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
         >
-          {lang === 'en' ? 'ES' : 'EN'}
+          {lang === 'en' ? 'EN' : 'ES'}
         </button>
       </div>
     </nav>
