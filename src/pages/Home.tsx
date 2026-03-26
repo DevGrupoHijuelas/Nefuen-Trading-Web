@@ -166,19 +166,24 @@ export default function Home() {
         const scrollContainer = document.querySelector('.gallery-scroll-container')
         if (scrollContainer) {
           const { scrollTop, scrollHeight, clientHeight } = scrollContainer
-          const isAtTop = scrollTop <= 15
-          const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
-          // Not at boundary — stay in gallery and mark as not at boundary
+          const isAtTop = scrollTop <= 5
+          const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 5)
+          // Not at boundary — stay in gallery and reset boundary flag
           if (deltaY > threshold && !isAtBottom) { galleryBoundaryAt.current = 0; return }
           if (deltaY < -threshold && !isAtTop) { galleryBoundaryAt.current = 0; return }
-          // At boundary — absorb first swipe, allow second
+          // At boundary — absorb first swipe, allow second (must be within 3s)
           if ((deltaY > threshold && isAtBottom) || (deltaY < -threshold && isAtTop)) {
-            if (galleryBoundaryAt.current === 0) {
-              galleryBoundaryAt.current = Date.now()
+            const now = Date.now()
+            if (galleryBoundaryAt.current === 0 || (now - galleryBoundaryAt.current) > 3000) {
+              // First swipe at boundary OR stale flag — absorb and reset
+              galleryBoundaryAt.current = now
               return
             }
-            // Second swipe at boundary — allow transition
+            // Second swipe at boundary within 3s — allow transition
             galleryBoundaryAt.current = 0
+          } else {
+            // Swipe too small at boundary — don't count
+            return
           }
         }
       }
