@@ -164,14 +164,10 @@ export default function Home() {
           const { scrollTop, scrollHeight, clientHeight } = scrollContainer
           const isAtTop = scrollTop <= 15
           const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
-          if (deltaY > threshold && !isAtBottom) { galleryBoundaryAt.current = 0; return }
-          if (deltaY < -threshold && !isAtTop) { galleryBoundaryAt.current = 0; return }
-          if ((deltaY > threshold && isAtBottom) || (deltaY < -threshold && isAtTop)) {
-            const now = Date.now()
-            if (galleryBoundaryAt.current === 0) { galleryBoundaryAt.current = now; return }
-            if (now - galleryBoundaryAt.current < 300) return
-            galleryBoundaryAt.current = 0
-          }
+          // Not at boundary — stay in gallery
+          if (deltaY > threshold && !isAtBottom) return
+          if (deltaY < -threshold && !isAtTop) return
+          // At boundary — let it through immediately on touch (no dwell timer)
         }
       }
       if (deltaY > threshold) handleScroll('down')

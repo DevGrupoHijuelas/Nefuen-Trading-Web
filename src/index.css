@@ -712,8 +712,15 @@ body {
   }
 
   .section-content.left .services-title {
-    padding-top: 25vh;
+    padding-top: 20dvh;
+    padding-top: 20vh;
     text-align: left;
+  }
+
+  @supports (height: 1dvh) {
+    .section-content.left .services-title {
+      padding-top: 20dvh;
+    }
   }
 
   .section-content.left .services-title h2 {
@@ -722,13 +729,12 @@ body {
   }
 
   .section-content.left .services-body {
-    position: absolute;
-    top: 54%;
-    left: 0;
-    transform: translateY(-50%);
-    width: 55%;
+    position: relative;
+    top: auto;
+    transform: none;
+    width: 60%;
     text-align: left;
-    margin-top: 0 !important;
+    margin-top: 24px !important;
     font-size: 0.9rem !important;
     line-height: 1.55 !important;
   }
