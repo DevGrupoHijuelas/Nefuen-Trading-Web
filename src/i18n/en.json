@@ -1,0 +1,44 @@
+{
+  "nav.nosotros": "About Us",
+  "nav.productos": "Products",
+  "nav.contacto": "Contact",
+
+  "hero.title": "NEFUEN TRADING",
+  "hero.subtitle": "HAZELNUTS FROM NORTH PATAGONIA",
+  "hero.cta": "OUR SERVICES",
+
+  "services.label": "WHAT WE DO",
+  "services.title": "FROM GENETICS TO MARKET",
+  "services.body": "We develop European hazelnuts from the Southern Hemisphere, integrating genetic innovation and high-precision processes for the world's most demanding markets.",
+
+  "transition.label": "NEFUEN TRADING",
+  "transition.title": "Sustainable\nProcesses",
+  "transition.body": "We implement precision agriculture and use 100% clean energy to minimize our carbon footprint, protecting the native ecosystem.",
+  "transition.cta": "SEE MORE ↓",
+
+  "gallery.title": "OUR SERVICES",
+  "gallery.01.heading": "Harvest\n& Selection",
+  "gallery.01.body": "We harvest hazelnuts at their optimal ripeness in the valleys of northern Patagonia.",
+  "gallery.02.heading": "Drying\n& Cleaning",
+  "gallery.02.body": "Controlled drying to reach ideal moisture, followed by deep cleaning.",
+  "gallery.03.heading": "Shelling\n& Grading",
+  "gallery.03.body": "Grading by size and weight ensuring uniformity for export standards.",
+  "gallery.04.heading": "Certified\nExport",
+  "gallery.04.body": "BRC Food and Global G.A.P. packaging, ready for European, Asian and North American markets.",
+
+  "final.title": "Global Reach",
+  "final.body": "From the fertile valleys of southern Chile to the most demanding palates and markets in Europe, Asia and North America.",
+  "final.cta": "CONTACT US",
+
+  "products.title": "PRODUCTS",
+  "products.subtitle": "Our Catalog",
+  "products.body": "Coming soon...",
+
+  "contact.title": "CONTACT",
+  "contact.subtitle": "Get in Touch",
+  "contact.body": "Coming soon...",
+
+  "aboutus.title": "ABOUT US",
+  "aboutus.subtitle": "Our Story",
+  "aboutus.body": "Coming soon..."
+}

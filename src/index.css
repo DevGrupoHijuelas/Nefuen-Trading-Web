@@ -113,6 +113,72 @@ body {
   color: var(--green-mid);
 }
 
+.lang-toggle {
+  background: none;
+  border: 1px solid var(--text-muted);
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.lang-toggle:hover {
+  border-color: var(--green-mid);
+  color: var(--green-mid);
+}
+
+/* ═══════════════════════════════════════
+   STANDALONE PAGES (Products, Contact, About)
+   ═══════════════════════════════════════ */
+
+.page-container {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 120px 5% 60px;
+  text-align: center;
+}
+
+.page-label {
+  color: var(--green-accent);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.page-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--green-brand);
+  text-transform: uppercase;
+  margin: 0 0 24px 0;
+  line-height: 0.95;
+}
+
+.page-body {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 500px;
+}
+
 /* ═══════════════════════════════════════
    HERO — centered vertically, left-aligned
    ═══════════════════════════════════════ */
@@ -646,25 +712,25 @@ body {
   }
 
   .section-content.left .services-title {
-    padding-top: 12vh;
+    padding-top: 25vh;
     text-align: left;
   }
 
   .section-content.left .services-title h2 {
-    font-size: clamp(3.2rem, 14vw, 5rem) !important;
-    max-width: 250px;
+    font-size: clamp(2.2rem, 10vw, 3.5rem) !important;
+    max-width: 260px;
   }
 
   .section-content.left .services-body {
     position: absolute;
-    top: 55%;
+    top: 54%;
     left: 0;
     transform: translateY(-50%);
     width: 55%;
     text-align: left;
     margin-top: 0 !important;
-    font-size: 1.15rem !important;
-    line-height: 1.7 !important;
+    font-size: 0.9rem !important;
+    line-height: 1.55 !important;
   }
 
   .transition-content {
