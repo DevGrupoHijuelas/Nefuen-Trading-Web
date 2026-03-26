@@ -30,7 +30,18 @@ function CameraRig() {
     cameraProgress.current = progressRef.current
     const progress = progressRef.current
 
-    const isMobile = window.innerWidth < 768
+    // Use aspect ratio for device detection (real phones have aspect < 0.7)
+    const aspect = state.viewport.aspect
+    const isPortrait = aspect < 0.8
+
+    // Adjust FOV for portrait mode (narrow screens need wider FOV)
+    if (isPortrait && (state.camera as THREE.PerspectiveCamera).fov !== 55) {
+      ;(state.camera as THREE.PerspectiveCamera).fov = 55
+      state.camera.updateProjectionMatrix()
+    } else if (!isPortrait && (state.camera as THREE.PerspectiveCamera).fov !== 45) {
+      ;(state.camera as THREE.PerspectiveCamera).fov = 45
+      state.camera.updateProjectionMatrix()
+    }
 
     let angle, radius, y, lookX, lookY
 
@@ -38,25 +49,25 @@ function CameraRig() {
       const t = progress / 0.333
       const ease = t * t * (3 - 2 * t)
       angle = THREE.MathUtils.lerp(0, Math.PI * 0.5, ease)
-      radius = THREE.MathUtils.lerp(15, isMobile ? 9 : 8, ease)
-      y = THREE.MathUtils.lerp(5, isMobile ? 2.5 : 2, ease)
-      lookX = THREE.MathUtils.lerp(0, isMobile ? 5 : 3, ease)
+      radius = THREE.MathUtils.lerp(15, isPortrait ? 9 : 8, ease)
+      y = THREE.MathUtils.lerp(5, 2, ease)
+      lookX = THREE.MathUtils.lerp(0, isPortrait ? 3 : 3, ease)
       lookY = THREE.MathUtils.lerp(0, 0, ease)
     } else if (progress < 0.666) {
       const t = (progress - 0.333) / 0.333
       const ease = t * t * (3 - 2 * t)
       angle = THREE.MathUtils.lerp(Math.PI * 0.5, Math.PI, ease)
-      radius = THREE.MathUtils.lerp(isMobile ? 9 : 8, isMobile ? 7 : 6, ease)
-      y = THREE.MathUtils.lerp(isMobile ? 2.5 : 2, 1, ease)
-      lookX = THREE.MathUtils.lerp(isMobile ? 5 : 3, isMobile ? 0 : -3, ease)
+      radius = THREE.MathUtils.lerp(isPortrait ? 9 : 8, isPortrait ? 7 : 6, ease)
+      y = THREE.MathUtils.lerp(2, 1, ease)
+      lookX = THREE.MathUtils.lerp(isPortrait ? 3 : 3, isPortrait ? 0 : -3, ease)
       lookY = THREE.MathUtils.lerp(0, 0, ease)
     } else {
       const t = (progress - 0.666) / 0.334
       const ease = t * t * (3 - 2 * t)
       angle = THREE.MathUtils.lerp(Math.PI, Math.PI * 1.5, ease)
-      radius = THREE.MathUtils.lerp(isMobile ? 10 : 6, isMobile ? 16 : 14, ease)
+      radius = THREE.MathUtils.lerp(isPortrait ? 10 : 6, isPortrait ? 16 : 14, ease)
       y = THREE.MathUtils.lerp(1, 8, ease)
-      lookX = THREE.MathUtils.lerp(isMobile ? 0 : -3, 0, ease)
+      lookX = THREE.MathUtils.lerp(isPortrait ? 0 : -3, 0, ease)
       lookY = THREE.MathUtils.lerp(0, 0, ease)
     }
 
