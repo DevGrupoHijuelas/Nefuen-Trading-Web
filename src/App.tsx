@@ -353,14 +353,14 @@ function App() {
             <div className="content reveal-text services-layout">
               <div className="services-title">
                 <p className="subtitle" style={{ color: 'var(--green-accent)', fontFamily: 'var(--font-heading)', fontWeight: 600, letterSpacing: '0.12em', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '12px' }}>
-                  SERVICES
+                  WHAT WE DO
                 </p>
                 <h2 style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', textTransform: 'uppercase', fontWeight: 800, lineHeight: 0.9 }}>
-                  WHAT WE DO
+                  FROM GENETICS TO MARKET
                 </h2>
               </div>
               <p className="services-body" style={{ color: 'var(--text-muted)', lineHeight: 1.6, fontSize: '1.05rem', marginTop: '16px' }}>
-                We connect Chilean hazelnuts to global markets through precision processing, quality control, and export expertise.
+                We develop European hazelnuts from the Southern Hemisphere, integrating genetic innovation and high-precision processes for the world's most demanding markets.
               </p>
             </div>
           </div>

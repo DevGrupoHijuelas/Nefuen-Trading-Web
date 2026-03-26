@@ -646,12 +646,8 @@ body {
   }
 
   .section-content.left .services-title {
-    padding-top: 25vh;
+    padding-top: 12vh;
     text-align: left;
-  }
-
-  .section-content.left .services-title .subtitle {
-    display: none;
   }
 
   .section-content.left .services-title h2 {
