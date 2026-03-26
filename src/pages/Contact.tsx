@@ -1,17 +1,214 @@
 import Navbar from '../components/Navbar'
 import { useTranslation } from '../i18n/LanguageContext'
 
+const sectionStyle = (bg: string): React.CSSProperties => ({
+  minHeight: '100vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: bg,
+  padding: '80px 5%',
+})
+
+const autoSection = (bg: string): React.CSSProperties => ({
+  minHeight: 'auto',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: bg,
+  padding: '80px 5%',
+})
+
+const wireframeBox: React.CSSProperties = {
+  border: '2px dashed #ccc',
+  borderRadius: 12,
+  padding: '60px 40px',
+  maxWidth: 900,
+  width: '100%',
+  textAlign: 'center',
+}
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: 'var(--font-heading)',
+  fontWeight: 600,
+  letterSpacing: '0.12em',
+  fontSize: '0.8rem',
+  textTransform: 'uppercase',
+  color: '#d4812a',
+  marginBottom: 12,
+}
+
+const titleStyle: React.CSSProperties = {
+  fontFamily: 'var(--font-heading)',
+  fontSize: 'clamp(2rem, 4vw, 3.5rem)',
+  fontWeight: 800,
+  color: '#2d3a2d',
+  textTransform: 'uppercase',
+  margin: '0 0 16px 0',
+  lineHeight: 1,
+}
+
+const subtitleStyle: React.CSSProperties = {
+  fontFamily: 'var(--font-body)',
+  fontSize: '1.1rem',
+  color: '#999',
+  maxWidth: 500,
+  margin: '0 auto',
+}
+
+const infoGrid: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+  gap: 20,
+  marginTop: 40,
+  width: '100%',
+}
+
+const infoCard: React.CSSProperties = {
+  border: '1.5px dashed #ccc',
+  borderRadius: 10,
+  padding: '24px 16px',
+  textAlign: 'center',
+  background: '#fafafa',
+}
+
+const infoLabel: React.CSSProperties = {
+  fontFamily: 'var(--font-heading)',
+  fontWeight: 700,
+  fontSize: '0.75rem',
+  color: '#d4812a',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  margin: '0 0 8px 0',
+}
+
+const infoValue: React.CSSProperties = {
+  fontFamily: 'var(--font-body)',
+  fontSize: '0.9rem',
+  color: '#666',
+  margin: 0,
+  wordBreak: 'break-word',
+}
+
+const formContainer: React.CSSProperties = {
+  marginTop: 30,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 16,
+  maxWidth: 500,
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  width: '100%',
+}
+
+const inputStyle: React.CSSProperties = {
+  fontFamily: 'var(--font-body)',
+  fontSize: '0.95rem',
+  padding: '12px 16px',
+  border: '1.5px dashed #ccc',
+  borderRadius: 8,
+  background: '#fafafa',
+  outline: 'none',
+  color: '#333',
+  width: '100%',
+  boxSizing: 'border-box',
+}
+
+const textareaStyle: React.CSSProperties = {
+  ...inputStyle,
+  minHeight: 120,
+  resize: 'vertical',
+}
+
+const submitButton: React.CSSProperties = {
+  fontFamily: 'var(--font-heading)',
+  fontWeight: 700,
+  fontSize: '0.9rem',
+  letterSpacing: '0.08em',
+  color: '#fff',
+  background: '#d4812a',
+  border: 'none',
+  borderRadius: 8,
+  padding: '14px 40px',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+  alignSelf: 'center',
+}
+
+const recipientNote: React.CSSProperties = {
+  fontFamily: 'var(--font-body)',
+  fontSize: '0.8rem',
+  color: '#bbb',
+  marginTop: 12,
+  textAlign: 'center',
+}
+
 export default function Contact() {
   const { t } = useTranslation()
 
   return (
-    <div className="page-container">
+    <div className="page-container" style={{ overflow: 'auto', height: '100vh' }}>
       <Navbar />
-      <main className="page-content">
-        <p className="page-label">{t('nav.contacto')}</p>
-        <h1 className="page-title">{t('contact.subtitle')}</h1>
-        <p className="page-body">{t('contact.body')}</p>
-      </main>
+
+      {/* Contact Info */}
+      <section style={sectionStyle('#fff')}>
+        <div style={wireframeBox}>
+          <p style={labelStyle}>{t('contact.label')}</p>
+          <h2 style={titleStyle}>{t('contact.subtitle')}</h2>
+          <p style={subtitleStyle}>{t('contact.body')}</p>
+          <div style={infoGrid}>
+            <div style={infoCard}>
+              <p style={infoLabel}>Email</p>
+              <p style={infoValue}>
+                <a href={`mailto:${t('contact.email')}`} style={{ color: '#d4812a', textDecoration: 'none' }}>
+                  {t('contact.email')}
+                </a>
+              </p>
+            </div>
+            <div style={infoCard}>
+              <p style={infoLabel}>Address</p>
+              <p style={infoValue}>{t('contact.address')}</p>
+            </div>
+            <div style={infoCard}>
+              <p style={infoLabel}>Website</p>
+              <p style={infoValue}>
+                <a href={`https://${t('contact.website')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#d4812a', textDecoration: 'none' }}>
+                  {t('contact.website')}
+                </a>
+              </p>
+            </div>
+            <div style={infoCard}>
+              <p style={infoLabel}>{t('contact.social')}</p>
+              <p style={infoValue}>
+                <a href="https://www.linkedin.com/company/nefuentrading" target="_blank" rel="noopener noreferrer" style={{ color: '#d4812a', textDecoration: 'none' }}>
+                  Nefuen Trading
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form */}
+      <section style={autoSection('#f8f8f8')}>
+        <div style={wireframeBox}>
+          <p style={labelStyle}>SEND US A MESSAGE</p>
+          <h2 style={{ ...titleStyle, fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>CONTACT FORM</h2>
+          <form
+            style={formContainer}
+            onSubmit={(e) => { e.preventDefault() }}
+          >
+            <input type="text" placeholder="Name" style={inputStyle} />
+            <input type="email" placeholder="Email" style={inputStyle} />
+            <input type="text" placeholder="Company" style={inputStyle} />
+            <textarea placeholder="Message" style={textareaStyle} />
+            <button type="submit" style={submitButton}>Submit</button>
+          </form>
+          <p style={recipientNote}>
+            Messages will be received by: Daniela V&aacute;squez, Macarena Kremer, Elizabeth Ceriani
+          </p>
+        </div>
+      </section>
     </div>
   )
 }
