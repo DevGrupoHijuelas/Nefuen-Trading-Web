@@ -1,43 +1,53 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import Hazelnut from './Hazelnut'
 import { cameraProgress } from './Scene'
 
-let finalNutCounter = 0
-
 export default function FinalFallingNuts() {
-  const [hazelnuts, setHazelnuts] = useState<{ id: string; position: [number, number, number]; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
+  const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
+  const hasStarted = useRef(false)
+  const spawnCount = useRef(0)
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | null = null
     let isActive = true
 
-    // Pre-populate so the floor is already covered when user arrives
-    const initialNuts = Array.from({ length: 200 }, () => ({
-      id: `final-init-${finalNutCounter++}-${Date.now()}`,
-      position: [(Math.random() - 0.5) * 8, Math.random() * 15, (Math.random() - 0.5) * 8] as [number, number, number],
-      rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
-      angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
-    }))
-    setHazelnuts(initialNuts)
+    const spawnBatch = (count: number) => {
+      const nuts = Array.from({ length: count }, (_, i) => ({
+        id: Date.now() + Math.random() + i,
+        position: [(Math.random() - 0.5) * 8, 8 + Math.random() * 10, (Math.random() - 0.5) * 8] as [number, number, number],
+        rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
+        angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
+      }))
+      return nuts
+    }
 
     const spawnLoop = () => {
       if (!isActive) return
-      
-      if (cameraProgress.current > 0.35) {
-        setHazelnuts((prev) => {
-          return [
+
+      // Only start spawning once camera is actually at the final section
+      if (cameraProgress.current > 0.85) {
+        if (!hasStarted.current) {
+          // First arrival: spawn a small initial batch (not 200 at once)
+          hasStarted.current = true
+          spawnCount.current = 0
+          setHazelnuts(spawnBatch(30))
+          spawnCount.current = 30
+        } else if (spawnCount.current < 200) {
+          // Gradually ramp up
+          const batchSize = Math.min(10, 200 - spawnCount.current)
+          setHazelnuts(prev => [...prev, ...spawnBatch(batchSize)].slice(-200))
+          spawnCount.current += batchSize
+        } else {
+          // Maintenance: keep a steady trickle
+          setHazelnuts(prev => [
             ...prev,
-            {
-              id: `final-${finalNutCounter++}-${Date.now()}`,
-              position: [(Math.random() - 0.5) * 8, 10 + Math.random() * 5, (Math.random() - 0.5) * 8] as [number, number, number],
-              rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
-              angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
-            }
-          ].slice(-300)
-        })
+            ...spawnBatch(2)
+          ].slice(-200))
+        }
       }
-      timeout = setTimeout(spawnLoop, 100)
+
+      timeout = setTimeout(spawnLoop, hasStarted.current && spawnCount.current < 200 ? 150 : 300)
     }
 
     const handleVisibility = () => {
@@ -50,27 +60,31 @@ export default function FinalFallingNuts() {
 
     return () => {
       isActive = false
+      hasStarted.current = false
+      spawnCount.current = 0
       if (timeout) clearTimeout(timeout)
       document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [])
 
-  // Hide when in the hero section — deferred to avoid Rapier concurrent access
+  // Clear when leaving the final section
   useFrame(() => {
-    if (cameraProgress.current < 0.3 && hazelnuts.length > 0) {
-      setHazelnuts([])
+    if (cameraProgress.current < 0.7 && hazelnuts.length > 0) {
+      hasStarted.current = false
+      spawnCount.current = 0
+      requestAnimationFrame(() => setHazelnuts([]))
     }
   })
 
   return (
     <>
       {hazelnuts.map((nut) => (
-        <Hazelnut 
-           key={nut.id} 
-           position={nut.position} 
+        <Hazelnut
+           key={nut.id}
+           position={nut.position}
            type="kernel"
-           rotation={nut.rotation} 
-           angularVelocity={nut.angVel} 
+           rotation={nut.rotation}
+           angularVelocity={nut.angVel}
            mode="finalFalling"
            castShadow={false}
         />
