@@ -3,8 +3,10 @@ import { useFrame } from '@react-three/fiber'
 import Hazelnut from './Hazelnut'
 import { cameraProgress } from './Scene'
 
+let heroNutCounter = 0
+
 export default function HeroFallingNuts() {
-  const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
+  const [hazelnuts, setHazelnuts] = useState<{ id: string; position: [number, number, number]; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | null = null
@@ -19,7 +21,7 @@ export default function HeroFallingNuts() {
           return [
             ...prev,
             {
-              id: Date.now() + Math.random(),
+              id: `hero-${heroNutCounter++}-${Date.now()}`,
               position: [(Math.random() - 0.5) * 4, 10 + Math.random() * 2, (Math.random() - 0.5) * 4] as [number, number, number],
               rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
               angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
@@ -48,7 +50,7 @@ export default function HeroFallingNuts() {
   // Clear array when out of view — deferred to avoid Rapier concurrent access
   useFrame(() => {
     if (cameraProgress.current > 0.35 && hazelnuts.length > 0) {
-      requestAnimationFrame(() => setHazelnuts([]))
+      setHazelnuts([])
     }
   })
 

@@ -3,16 +3,18 @@ import { useFrame } from '@react-three/fiber'
 import Hazelnut from './Hazelnut'
 import { cameraProgress } from './Scene'
 
+let finalNutCounter = 0
+
 export default function FinalFallingNuts() {
-  const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
+  const [hazelnuts, setHazelnuts] = useState<{ id: string; position: [number, number, number]; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | null = null
     let isActive = true
 
     // Pre-populate so the floor is already covered when user arrives
-    const initialNuts = Array.from({ length: 200 }, (_, i) => ({
-      id: Date.now() + Math.random() + i,
+    const initialNuts = Array.from({ length: 200 }, () => ({
+      id: `final-init-${finalNutCounter++}-${Date.now()}`,
       position: [(Math.random() - 0.5) * 8, Math.random() * 15, (Math.random() - 0.5) * 8] as [number, number, number],
       rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
       angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
@@ -27,7 +29,7 @@ export default function FinalFallingNuts() {
           return [
             ...prev,
             {
-              id: Date.now() + Math.random(),
+              id: `final-${finalNutCounter++}-${Date.now()}`,
               position: [(Math.random() - 0.5) * 8, 10 + Math.random() * 5, (Math.random() - 0.5) * 8] as [number, number, number],
               rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
               angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
@@ -56,7 +58,7 @@ export default function FinalFallingNuts() {
   // Hide when in the hero section — deferred to avoid Rapier concurrent access
   useFrame(() => {
     if (cameraProgress.current < 0.3 && hazelnuts.length > 0) {
-      requestAnimationFrame(() => setHazelnuts([]))
+      setHazelnuts([])
     }
   })
 

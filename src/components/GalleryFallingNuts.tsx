@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react'
 import Hazelnut from './Hazelnut'
 import { cameraProgress } from './Scene'
 
+let galleryNutCounter = 0
+
 export default function GalleryFallingNuts() {
-  const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; type: 'kernel' | 'inshell'; rotation: [number, number, number]; angVel: [number, number, number]; gravityScale: number; linearDamping: number }[]>([])
+  const [hazelnuts, setHazelnuts] = useState<{ id: string; position: [number, number, number]; type: 'kernel' | 'inshell'; rotation: [number, number, number]; angVel: [number, number, number]; gravityScale: number; linearDamping: number }[]>([])
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | null = null
     let isActive = true
 
-    // Pre-populate so the screen is immediately full of randomly distributed falling nuts
-    const initialNuts = Array.from({ length: 150 }, (_, i) => ({
-      id: Date.now() + Math.random() + i,
+    const initialNuts = Array.from({ length: 150 }, () => ({
+      id: `gallery-init-${galleryNutCounter++}-${Date.now()}`,
       position: [(Math.random() - 0.5) * 20, (Math.random() * 25) - 5, (Math.random() - 0.5) * 8] as [number, number, number],
       type: (Math.random() > 0.5 ? 'kernel' : 'inshell') as 'kernel' | 'inshell',
       rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
@@ -32,7 +33,7 @@ export default function GalleryFallingNuts() {
           return [
             ...prev,
             {
-              id: Date.now() + Math.random(),
+              id: `gallery-${galleryNutCounter++}-${Date.now()}`,
               position: [(Math.random() - 0.5) * 20, 10 + Math.random() * 5, (Math.random() - 0.5) * 8] as [number, number, number],
               type: (Math.random() > 0.5 ? 'kernel' : 'inshell') as 'kernel' | 'inshell',
               rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],

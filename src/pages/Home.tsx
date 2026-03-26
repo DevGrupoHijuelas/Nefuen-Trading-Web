@@ -119,16 +119,17 @@ export default function Home() {
         const scrollContainer = document.querySelector('.gallery-scroll-container')
         if (scrollContainer) {
           const { scrollTop, scrollHeight, clientHeight } = scrollContainer
-          const isAtBottom = Math.abs((scrollTop + clientHeight) - scrollHeight) <= 2
-          const isAtTop = scrollTop <= 2
-          // Not at boundary — allow native gallery scroll, reset flag
+          const isAtTop = scrollTop <= 10
+          const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 10)
+          
           if (e.deltaY > 0 && !isAtBottom) { galleryBoundaryAt.current = 0; return }
           if (e.deltaY < 0 && !isAtTop) { galleryBoundaryAt.current = 0; return }
-          // At boundary — absorb scrolls for 500ms then allow transition
+          
           const now = Date.now()
           if (galleryBoundaryAt.current === 0) galleryBoundaryAt.current = now
           if (now - galleryBoundaryAt.current < 500) { e.preventDefault(); return }
-          galleryBoundaryAt.current = 0
+          // If we passed the 500ms, keep galleryBoundaryAt set so it continues to work
+          // but reset handled below in handleScroll
         }
       }
       e.preventDefault()
@@ -150,10 +151,16 @@ export default function Home() {
         if (!scrollContainer) { if (e.cancelable) e.preventDefault(); return }
         const { scrollTop, scrollHeight, clientHeight } = scrollContainer
         const delta = touchStartY - touchCurrentY
-        const isAtTop = scrollTop <= 2
-        const isAtBottom = Math.abs((scrollTop + clientHeight) - scrollHeight) <= 2
-        if (delta > 0 && isAtBottom) { if (e.cancelable) e.preventDefault() }
-        if (delta < 0 && isAtTop) { if (e.cancelable) e.preventDefault() }
+        const isAtTop = scrollTop <= 10
+        const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 10)
+
+        // Track when we hit the boundary during movement
+        if ((delta > 0 && isAtBottom) || (delta < 0 && isAtTop)) {
+          if (galleryBoundaryAt.current === 0) galleryBoundaryAt.current = Date.now()
+          if (e.cancelable) e.preventDefault()
+        } else {
+          galleryBoundaryAt.current = 0
+        }
       }
     }
 
@@ -164,19 +171,26 @@ export default function Home() {
         const scrollContainer = document.querySelector('.gallery-scroll-container')
         if (scrollContainer) {
           const { scrollTop, scrollHeight, clientHeight } = scrollContainer
-          const isAtTop = scrollTop <= 15
-          const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
-          // Not at boundary — stay in gallery and mark as not at boundary
-          if (deltaY > threshold && !isAtBottom) { galleryBoundaryAt.current = 0; return }
-          if (deltaY < -threshold && !isAtTop) { galleryBoundaryAt.current = 0; return }
-          // At boundary — absorb first swipe, allow second
+          const isAtTop = scrollTop <= 10
+          const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 10)
+          
           if ((deltaY > threshold && isAtBottom) || (deltaY < -threshold && isAtTop)) {
+            const now = Date.now()
+            // If they just arrived at boundary with this swipe, start timer and block
             if (galleryBoundaryAt.current === 0) {
-              galleryBoundaryAt.current = Date.now()
+              galleryBoundaryAt.current = now
               return
             }
-            // Second swipe at boundary — allow transition
+            // If they swiped after being at boundary for < 500ms, block
+            // This prevents accidental bounce-through from a fast scroll
+            if (now - galleryBoundaryAt.current < 500) return
+            
+            // Allow transition
             galleryBoundaryAt.current = 0
+          } else {
+            // Not at boundary or not enough swipe delta — reset lockout
+            galleryBoundaryAt.current = 0
+            if (Math.abs(deltaY) > threshold) return // Inside gallery, don't trigger outer scroll
           }
         }
       }
