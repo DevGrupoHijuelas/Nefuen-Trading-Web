@@ -109,7 +109,7 @@ export default function Home() {
     let touchCurrentY = 0
 
     const handleScroll = (direction: 'down' | 'up') => {
-      if (isAnimating.current || Date.now() - scrollLockAt.current < 1200) return
+      if (isAnimating.current || Date.now() - scrollLockAt.current < 1500) return
       if (direction === 'down') goToSection(currentSection.current + 1)
       else goToSection(currentSection.current - 1)
     }
