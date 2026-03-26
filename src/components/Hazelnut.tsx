@@ -129,13 +129,14 @@ function initializeSharedAssets(fbx: THREE.Group, colorMap: THREE.Texture, norma
   fbx.traverse((child) => {
     if ((child as THREE.Mesh).isMesh) {
       sharedGeometry = (child as THREE.Mesh).geometry
+      console.log('Hazelnut: Found geometry', sharedGeometry.uuid)
     }
   })
 
-  colorMap.colorSpace = THREE.SRGBColorSpace
-  colorMap.flipY = false
-  normalMap.flipY = false
-  dispMap.flipY = false
+  if (!sharedGeometry) {
+    console.error('Hazelnut: Reverting to fallback mesh - No geometry found in FBX')
+    sharedGeometry = new THREE.SphereGeometry(1, 32, 32)
+  }
 
   sharedKernelMaterial = new THREE.MeshStandardMaterial({
     map: colorMap,
@@ -155,6 +156,7 @@ function initializeSharedAssets(fbx: THREE.Group, colorMap: THREE.Texture, norma
     normalScale: new THREE.Vector2(0.6, 0.6),
   }))
 
+  assetsInitialized = true
   notifyAssetSubscribers()
 }
 
@@ -197,7 +199,10 @@ export default function Hazelnut({
 
   // Subscription to global assets
   useEffect(() => {
-    if (assetsInitialized) return
+    if (assetsInitialized) {
+      setReady(true)
+      return
+    }
     const sub = () => setReady(true)
     assetSubscribers.add(sub)
     return () => { assetSubscribers.delete(sub) }
@@ -292,9 +297,9 @@ export default function Hazelnut({
   const content = (
     <group ref={meshGroupRef}>
       <group ref={trackerRef} />
-      {ready && material && (
+      {material && (
         <mesh 
-          geometry={sharedGeometry!} 
+          geometry={sharedGeometry || new THREE.SphereGeometry(1)}
           material={material} 
           castShadow={castShadow} 
           receiveShadow={true} 
