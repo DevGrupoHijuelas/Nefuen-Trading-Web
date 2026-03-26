@@ -2049,10 +2049,90 @@ body {
   margin: 0;
 }
 
+/* Video Break — cinematic scroll-through */
+.video-break {
+  position: relative;
+  height: 200vh;
+}
+
+.video-break__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.video-break__video-wrap {
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  right: -100px;
+  bottom: -100px;
+}
+
+.video-break__iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+  object-fit: cover;
+}
+
+.video-break__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0.05) 60%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+}
+
+.video-break__text {
+  position: absolute;
+  bottom: 48px;
+  left: 48px;
+  z-index: 2;
+}
+
+.video-break__text span {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 500;
+  font-style: italic;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+  .video-break__text {
+    bottom: 32px;
+    left: 24px;
+  }
+}
+
 /* Grupo Hijuelas */
 .about-grupo-section {
   padding: 80px 24px;
-  background: #fff;
+  background: #f5f4f0;
+}
+
+.about-grupo-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.about-grupo-video__iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
 }
 
 .about-grupo-inner {

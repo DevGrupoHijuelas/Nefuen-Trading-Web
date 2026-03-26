@@ -138,8 +138,14 @@ export default function AboutUs() {
       <section className="about-grupo-section">
         <div className="about-grupo-inner">
           <div className="about-concept-grid">
-            <div className="about-concept-image" style={{ order: -1 }}>
-              <span>{t('aboutus.grupo.title')}</span>
+            <div className="about-grupo-video" style={{ order: -1 }}>
+              <iframe
+                src="https://www.youtube.com/embed/k9XNzzYzhCc?autoplay=1&mute=1&loop=1&playlist=k9XNzzYzhCc&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3"
+                title="Nefuen Trading"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className="about-grupo-video__iframe"
+              />
             </div>
             <div>
               <span className="about-label">{t('aboutus.grupo.label')}</span>
