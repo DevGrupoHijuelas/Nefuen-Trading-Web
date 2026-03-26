@@ -2,7 +2,7 @@ import { useMemo, useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { RigidBody } from '@react-three/rapier'
 import { cameraProgress } from './Scene'
-import { useFBX, useTexture, Center } from '@react-three/drei'
+import { useFBX, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import BlobShadow from './BlobShadow'
 
@@ -103,14 +103,51 @@ function createInshellTexture(hilumSize = 1.0) {
   return texture
 }
 
-// Pre-generate 4 texture variants with different hilum sizes to add natural visual variety
-// hilumSize: 1.0 = full large scar (as designed), 0.25 = quarter-sized scar
+// Pre-generate 4 texture variants with different hilum sizes
 const INSHELL_TEXTURES = [
-  createInshellTexture(0.8),   // Biggest
-  createInshellTexture(0.67),  // Medium large
-  createInshellTexture(0.53),  // Medium small
-  createInshellTexture(0.4),   // Smallest
+  createInshellTexture(0.8),
+  createInshellTexture(0.67),
+  createInshellTexture(0.53),
+  createInshellTexture(0.4),
 ]
+
+// --- Global Shared Assets ---
+let sharedGeometry: THREE.BufferGeometry | null = null
+let sharedKernelMaterial: THREE.MeshStandardMaterial | null = null
+let sharedInshellMaterials: THREE.MeshPhysicalMaterial[] = []
+
+function initializeSharedAssets(fbx: THREE.Group, colorMap: THREE.Texture, normalMap: THREE.Texture, dispMap: THREE.Texture) {
+  if (sharedGeometry) return
+
+  fbx.traverse((child) => {
+    if ((child as THREE.Mesh).isMesh) {
+      sharedGeometry = (child as THREE.Mesh).geometry
+    }
+  })
+
+  colorMap.colorSpace = THREE.SRGBColorSpace
+  colorMap.flipY = false
+  normalMap.flipY = false
+  dispMap.flipY = false
+
+  sharedKernelMaterial = new THREE.MeshStandardMaterial({
+    map: colorMap,
+    normalMap: normalMap,
+    displacementMap: dispMap,
+    displacementScale: 0.02,
+    roughness: 0.7,
+  })
+
+  sharedInshellMaterials = INSHELL_TEXTURES.map((tex) => new THREE.MeshPhysicalMaterial({
+    map: tex,
+    roughness: 0.4,
+    metalness: 0.02,
+    clearcoat: 0.8,
+    clearcoatRoughness: 0.15,
+    normalMap: normalMap,
+    normalScale: new THREE.Vector2(0.6, 0.6),
+  }))
+}
 
 interface HazelnutProps {
   position: [number, number, number]
@@ -147,50 +184,14 @@ export default function Hazelnut({
     '/models/hazelnut/1k_textures/BB_031_hazelnut_01_disp.jpg',
   ])
 
-  // Pick a random texture variant once per instance (stable via useMemo with no deps)
-  const inshellTex = useMemo(() => {
-    const idx = Math.floor(Math.random() * INSHELL_TEXTURES.length)
-    return INSHELL_TEXTURES[idx]
-  }, [])
+  // Initialize shared assets once
+  useEffect(() => {
+    initializeSharedAssets(fbx, colorMap, normalMap, dispMap)
+  }, [fbx, colorMap, normalMap, dispMap])
 
-  const cloned = useMemo(() => {
-    colorMap.colorSpace = THREE.SRGBColorSpace
-    
-    colorMap.flipY = false
-    normalMap.flipY = false
-    dispMap.flipY = false
-
-    const clone = fbx.clone(true)
-    clone.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh
-        mesh.castShadow = castShadow
-        mesh.receiveShadow = true
-        
-        if (type === 'kernel') {
-          mesh.material = new THREE.MeshStandardMaterial({
-            map: colorMap,
-            normalMap: normalMap,
-            displacementMap: dispMap,
-            displacementScale: 0.02,
-            roughness: 0.7,
-          })
-        } else {
-          // Inshell material: Photorealistic procedural Canvas texture!
-          mesh.material = new THREE.MeshPhysicalMaterial({
-            map: inshellTex,
-            roughness: 0.4,
-            metalness: 0.02,
-            clearcoat: 0.8,
-            clearcoatRoughness: 0.15,
-            normalMap: normalMap, 
-            normalScale: new THREE.Vector2(0.6, 0.6),
-          })
-        }
-      }
-    })
-    return clone
-  }, [fbx, colorMap, normalMap, dispMap, type, inshellTex, castShadow])
+  // Get a stable material for this instance
+  const matIndex = useMemo(() => Math.floor(Math.random() * INSHELL_TEXTURES.length), [])
+  const material = type === 'kernel' ? sharedKernelMaterial : sharedInshellMaterials[matIndex]
 
   // Tracker group inside RigidBody — BlobShadow reads its world position
   const trackerRef = useRef<THREE.Group>(null)
@@ -272,9 +273,15 @@ export default function Hazelnut({
   const content = (
     <group ref={meshGroupRef}>
       <group ref={trackerRef} />
-      <Center>
-        <primitive object={cloned} scale={type === 'inshell' ? 0.28 : 0.1} />
-      </Center>
+      {sharedGeometry && material && (
+        <mesh 
+          geometry={sharedGeometry} 
+          material={material} 
+          castShadow={castShadow} 
+          receiveShadow={true} 
+          scale={type === 'inshell' ? 0.28 : 0.1}
+        />
+      )}
     </group>
   )
 
