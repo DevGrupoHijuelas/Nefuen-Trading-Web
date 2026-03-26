@@ -1,185 +1,134 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import { useTranslation } from '../i18n/LanguageContext'
-
-const sectionStyle = (bg: string): React.CSSProperties => ({
-  minHeight: '100vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: bg,
-  padding: '80px 5%',
-})
-
-const autoSection = (bg: string): React.CSSProperties => ({
-  minHeight: 'auto',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: bg,
-  padding: '80px 5%',
-})
-
-const wireframeBox: React.CSSProperties = {
-  border: '2px dashed #ccc',
-  borderRadius: 12,
-  padding: '60px 40px',
-  maxWidth: 900,
-  width: '100%',
-  textAlign: 'center',
-}
-
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-heading)',
-  fontWeight: 600,
-  letterSpacing: '0.12em',
-  fontSize: '0.8rem',
-  textTransform: 'uppercase',
-  color: '#d4812a',
-  marginBottom: 12,
-}
-
-const titleStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-heading)',
-  fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-  fontWeight: 800,
-  color: '#2d3a2d',
-  textTransform: 'uppercase',
-  margin: '0 0 16px 0',
-  lineHeight: 1,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-body)',
-  fontSize: '1.1rem',
-  color: '#999',
-  maxWidth: 500,
-  margin: '0 auto',
-}
-
-const bodyText: React.CSSProperties = {
-  fontFamily: 'var(--font-body)',
-  fontSize: '1rem',
-  color: '#666',
-  lineHeight: 1.7,
-  maxWidth: 700,
-  margin: '20px auto 0',
-  textAlign: 'left',
-}
-
-const teamGrid: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-  gap: 20,
-  marginTop: 40,
-  width: '100%',
-}
-
-const teamCard: React.CSSProperties = {
-  border: '1.5px dashed #ccc',
-  borderRadius: 10,
-  padding: '28px 16px',
-  textAlign: 'center',
-  background: '#fafafa',
-}
-
-const teamName: React.CSSProperties = {
-  fontFamily: 'var(--font-heading)',
-  fontWeight: 700,
-  fontSize: '0.95rem',
-  color: '#2d3a2d',
-  margin: '0 0 4px 0',
-}
-
-const teamRole: React.CSSProperties = {
-  fontFamily: 'var(--font-body)',
-  fontSize: '0.8rem',
-  color: '#999',
-  margin: 0,
-}
-
-const subSectionBox: React.CSSProperties = {
-  border: '1.5px dashed #d4812a',
-  borderRadius: 10,
-  padding: '28px 24px',
-  marginTop: 30,
-  textAlign: 'left',
-  background: '#fdf8f3',
-}
-
-const ctaButton: React.CSSProperties = {
-  display: 'inline-block',
-  marginTop: 24,
-  padding: '14px 40px',
-  fontFamily: 'var(--font-heading)',
-  fontWeight: 700,
-  fontSize: '0.9rem',
-  letterSpacing: '0.08em',
-  color: '#fff',
-  background: '#d4812a',
-  border: 'none',
-  borderRadius: 8,
-  textDecoration: 'none',
-  textTransform: 'uppercase',
-  cursor: 'pointer',
-}
+import gsap from 'gsap'
 
 const teamMembers = [0, 1, 2, 3, 4, 5, 6] as const
 
 export default function AboutUs() {
   const { t } = useTranslation()
+  const heroContainerRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const imageRef = useRef<HTMLDivElement>(null)
+  const textLeftRef = useRef<HTMLDivElement>(null)
+  const textRightRef = useRef<HTMLParagraphElement>(null)
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.set(titleRef.current, { opacity: 0, y: 60 })
+      gsap.set(imageRef.current, { opacity: 0, scale: 1.1, y: 40 })
+      gsap.set([textLeftRef.current, textRightRef.current], { opacity: 0, y: 40 })
+
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 1 } })
+
+      tl.to(titleRef.current, { opacity: 1, y: 0, duration: 1.2 })
+        .to(imageRef.current, { opacity: 1, scale: 1, y: 0, duration: 1.4 }, '-=0.6')
+        .to(textLeftRef.current, { opacity: 1, y: 0 }, '-=0.8')
+        .to(textRightRef.current, { opacity: 1, y: 0 }, '-=0.7')
+    }, heroContainerRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
     <div className="page-container" style={{ overflow: 'auto', height: '100vh' }}>
       <Navbar />
 
-      {/* Hero */}
-      <section style={sectionStyle('#fff')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('aboutus.hero.label')}</p>
-          <h2 style={titleStyle}>{t('aboutus.hero.title')}</h2>
-          <p style={subtitleStyle}>{t('aboutus.hero.subtitle')}</p>
+      {/* Hero - Sticky */}
+      <div ref={heroContainerRef} className="about-hero-container">
+        <section className="about-hero-sticky">
+          <div className="about-hero-inner">
+            <div className="about-hero-title-row">
+              <span className="about-label">{t('aboutus.hero.label')}</span>
+              <h1 ref={titleRef} className="about-hero-title">
+                {t('aboutus.hero.title')}
+              </h1>
+            </div>
+
+            {/* Image placeholder */}
+            <div ref={imageRef} className="about-hero-image">
+              <div className="about-hero-image-placeholder">
+                <span>Nefuen Trading</span>
+              </div>
+            </div>
+
+            {/* CTA + Text row */}
+            <div className="about-hero-bottom">
+              <div ref={textLeftRef} className="about-hero-cta-col">
+                <Link to="/products" className="about-cta-link">
+                  <span className="about-cta-arrow">→</span>
+                  <span>{t('nav.productos')}</span>
+                </Link>
+              </div>
+              <p ref={textRightRef} className="about-hero-text">
+                {t('aboutus.hero.subtitle')}
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Our Story - slides over hero */}
+      <section className="about-concept-section">
+        <div className="about-concept-inner">
+          <div className="about-concept-grid">
+            <div>
+              <span className="about-label">{t('aboutus.story.label')}</span>
+              <h2 className="about-concept-title">{t('aboutus.story.title')}</h2>
+              <p className="about-concept-text">{t('aboutus.story.subtitle')}</p>
+            </div>
+            <div className="about-concept-image">
+              <span>{t('aboutus.story.label')}</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Our Story */}
-      <section style={autoSection('#f8f8f8')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('aboutus.story.label')}</p>
-          <h2 style={titleStyle}>{t('aboutus.story.title')}</h2>
-          <p style={bodyText}>{t('aboutus.story.subtitle')}</p>
+      {/* Parallax Quote */}
+      <section className="about-parallax">
+        <div className="about-parallax-bg">
+          <div className="about-parallax-overlay" />
+        </div>
+        <div className="about-parallax-content">
+          <p className="about-parallax-quote">
+            "{t('aboutus.mission.subtitle').substring(0, 120)}..."
+          </p>
         </div>
       </section>
 
-      {/* Mission */}
-      <section style={autoSection('#fff')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('aboutus.mission.label')}</p>
-          <h2 style={titleStyle}>{t('aboutus.mission.title')}</h2>
-          <p style={bodyText}>{t('aboutus.mission.subtitle')}</p>
-        </div>
-      </section>
-
-      {/* Vision */}
-      <section style={autoSection('#f8f8f8')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('aboutus.vision.label')}</p>
-          <h2 style={titleStyle}>{t('aboutus.vision.title')}</h2>
-          <p style={bodyText}>{t('aboutus.vision.subtitle')}</p>
+      {/* Mission & Vision */}
+      <section className="about-mv-section">
+        <div className="about-mv-inner">
+          <div className="about-mv-grid">
+            <div className="about-mv-card">
+              <span className="about-label">{t('aboutus.mission.label')}</span>
+              <h2 className="about-mv-title">{t('aboutus.mission.title')}</h2>
+              <p className="about-mv-text">{t('aboutus.mission.subtitle')}</p>
+            </div>
+            <div className="about-mv-card">
+              <span className="about-label">{t('aboutus.vision.label')}</span>
+              <h2 className="about-mv-title">{t('aboutus.vision.title')}</h2>
+              <p className="about-mv-text">{t('aboutus.vision.subtitle')}</p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Team */}
-      <section style={autoSection('#fff')}>
-        <div style={{ ...wireframeBox, maxWidth: 1000 }}>
-          <p style={labelStyle}>{t('aboutus.team.label')}</p>
-          <h2 style={titleStyle}>{t('aboutus.team.title')}</h2>
-          <p style={subtitleStyle}>{t('aboutus.team.subtitle')}</p>
-          <div style={teamGrid}>
+      <section className="about-team-section">
+        <div className="about-team-inner">
+          <span className="about-label">{t('aboutus.team.label')}</span>
+          <h2 className="about-team-title">{t('aboutus.team.title')}</h2>
+          <p className="about-team-subtitle">{t('aboutus.team.subtitle')}</p>
+          <div className="about-team-grid">
             {teamMembers.map((i) => (
-              <div key={i} style={teamCard}>
-                <p style={teamName}>{t(`aboutus.team.members.${i}.name`)}</p>
-                <p style={teamRole}>{t(`aboutus.team.members.${i}.role`)}</p>
+              <div key={i} className="about-team-card">
+                <div className="about-team-avatar">
+                  <span>{t(`aboutus.team.members.${i}.name`).charAt(0)}</span>
+                </div>
+                <p className="about-team-name">{t(`aboutus.team.members.${i}.name`)}</p>
+                <p className="about-team-role">{t(`aboutus.team.members.${i}.role`)}</p>
               </div>
             ))}
           </div>
@@ -187,46 +136,30 @@ export default function AboutUs() {
       </section>
 
       {/* Grupo Hijuelas */}
-      <section style={autoSection('#f8f8f8')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('aboutus.grupo.label')}</p>
-          <h2 style={titleStyle}>{t('aboutus.grupo.title')}</h2>
-          <p style={bodyText}>{t('aboutus.grupo.subtitle')}</p>
-          <div style={subSectionBox}>
-            <p style={{ ...labelStyle, marginBottom: 8 }}>{t('aboutus.grupo.genetics.label')}</p>
-            <p style={{ ...bodyText, margin: 0, maxWidth: 'none' }}>{t('aboutus.grupo.genetics.text')}</p>
+      <section className="about-grupo-section">
+        <div className="about-grupo-inner">
+          <div className="about-concept-grid">
+            <div className="about-concept-image" style={{ order: -1 }}>
+              <span>{t('aboutus.grupo.title')}</span>
+            </div>
+            <div>
+              <span className="about-label">{t('aboutus.grupo.label')}</span>
+              <h2 className="about-concept-title">{t('aboutus.grupo.title')}</h2>
+              <p className="about-concept-text">{t('aboutus.grupo.subtitle')}</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Certifications */}
-      <section style={autoSection('#fff')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('aboutus.cert.label')}</p>
-          <h2 style={titleStyle}>{t('aboutus.cert.title')}</h2>
-          <p style={bodyText}>{t('aboutus.cert.subtitle')}</p>
-          <div style={{ ...subSectionBox, background: '#f5f9f5' }}>
-            <p style={{ ...bodyText, margin: 0, maxWidth: 'none' }}>
-              <strong style={{ color: '#2d3a2d' }}>BRCGS: </strong>
-              {t('aboutus.cert.brcgs')}
-            </p>
-          </div>
-          <div style={{ ...subSectionBox, background: '#f5f9f5' }}>
-            <p style={{ ...bodyText, margin: 0, maxWidth: 'none' }}>
-              <strong style={{ color: '#2d3a2d' }}>SMETA: </strong>
-              {t('aboutus.cert.smeta')}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section style={sectionStyle('#f8f8f8')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('aboutus.cta.label')}</p>
-          <h2 style={titleStyle}>{t('aboutus.cta.title')}</h2>
-          <p style={subtitleStyle}>{t('aboutus.cta.subtitle')}</p>
-          <Link to="/contact" style={ctaButton}>{t('aboutus.cta.button')}</Link>
+      {/* CTA Section */}
+      <section className="about-cta-section">
+        <div className="about-cta-inner">
+          <span className="about-label about-label--light">{t('aboutus.cta.label')}</span>
+          <h2 className="about-cta-title">{t('aboutus.cta.title')}</h2>
+          <p className="about-cta-subtitle">{t('aboutus.cta.subtitle')}</p>
+          <Link to="/contact" className="about-cta-button">
+            {t('aboutus.cta.button')}
+          </Link>
         </div>
       </section>
     </div>

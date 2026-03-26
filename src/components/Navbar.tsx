@@ -5,6 +5,15 @@ interface NavbarProps {
   visible?: boolean
 }
 
+function AnimatedLink({ to, children }: { to: string; children: React.ReactNode }) {
+  return (
+    <Link to={to} className="nav-link-animated">
+      <span className="nav-link-top">{children}</span>
+      <span className="nav-link-bottom">{children}</span>
+    </Link>
+  )
+}
+
 export default function Navbar({ visible = true }: NavbarProps) {
   const { lang, setLang, t } = useTranslation()
 
@@ -18,14 +27,15 @@ export default function Navbar({ visible = true }: NavbarProps) {
         </Link>
       </div>
       <div className="nav-links">
-        <Link to="/aboutus">{t('nav.nosotros')}</Link>
-        <Link to="/products">{t('nav.productos')}</Link>
-        <Link to="/contact">{t('nav.contacto')}</Link>
+        <AnimatedLink to="/aboutus">{t('nav.nosotros')}</AnimatedLink>
+        <AnimatedLink to="/products">{t('nav.productos')}</AnimatedLink>
+        <AnimatedLink to="/contact">{t('nav.contacto')}</AnimatedLink>
         <button
-          className="lang-toggle"
+          className="lang-slide-button"
           onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
         >
-          {lang === 'en' ? 'EN' : 'ES'}
+          <span className="lang-slide-top">{lang === 'en' ? 'EN' : 'ES'}</span>
+          <span className="lang-slide-bottom">{lang === 'en' ? 'EN' : 'ES'}</span>
         </button>
       </div>
     </nav>

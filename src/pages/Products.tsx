@@ -1,254 +1,175 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import { useTranslation } from '../i18n/LanguageContext'
 
-const sectionStyle = (bg: string): React.CSSProperties => ({
-  minHeight: '100vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: bg,
-  padding: '80px 5%',
-})
+function ArrowCTA({ label, to, reverse = false }: { label: string; to: string; reverse?: boolean }) {
+  const [isHovered, setIsHovered] = useState(false)
 
-const autoSection = (bg: string): React.CSSProperties => ({
-  minHeight: 'auto',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: bg,
-  padding: '80px 5%',
-})
-
-const wireframeBox: React.CSSProperties = {
-  border: '2px dashed #ccc',
-  borderRadius: 12,
-  padding: '60px 40px',
-  maxWidth: 1000,
-  width: '100%',
-  textAlign: 'center',
+  return (
+    <Link
+      to={to}
+      className={`product-arrow-cta ${reverse ? 'product-arrow-cta--reverse' : ''}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span className="product-arrow-icon">
+        <svg className="product-arrow-brackets" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M1 8V1H8" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
+          <path d="M20 1H27V8" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
+          <path d="M1 20V27H8" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
+          <path d="M20 27H27V20" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
+        </svg>
+        <span className="product-arrow-swap">
+          <svg
+            className={`product-arrow-svg ${isHovered ? 'arrow-out' : 'arrow-visible'}`}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+          >
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+          <svg
+            className={`product-arrow-svg ${isHovered ? 'arrow-visible' : 'arrow-in'}`}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+          >
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </span>
+      </span>
+      <span className={`product-arrow-label ${isHovered ? 'label-shifted' : ''}`}>
+        {label}
+      </span>
+    </Link>
+  )
 }
 
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-heading)',
-  fontWeight: 600,
-  letterSpacing: '0.12em',
-  fontSize: '0.8rem',
-  textTransform: 'uppercase',
-  color: '#d4812a',
-  marginBottom: 12,
+function ProductSection({
+  title,
+  subtitle,
+  description,
+  reverse = false,
+}: {
+  title: string
+  subtitle: string
+  description: string
+  reverse?: boolean
+}) {
+  const [isHovered, setIsHovered] = useState(false)
+  const { t } = useTranslation()
+
+  return (
+    <div className={`product-section ${reverse ? 'product-section--reverse' : ''}`}>
+      {/* Image placeholder */}
+      <div
+        className="product-section__image"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className={`product-section__image-inner ${isHovered ? 'image-zoomed' : ''}`}>
+          <span className="product-section__image-label">{title}</span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="product-section__content">
+        <h2
+          className={`product-section__title ${isHovered ? 'title-shifted' : ''}`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {title}
+        </h2>
+        <h3
+          className="product-section__subtitle"
+          onMouseEnter={() => setIsHovered(false)}
+        >
+          {subtitle}
+        </h3>
+        <p
+          className="product-section__desc"
+          onMouseEnter={() => setIsHovered(false)}
+        >
+          {description}
+        </p>
+        <ArrowCTA label={t('products.cta.button')} to="/contact" reverse={reverse} />
+      </div>
+    </div>
+  )
 }
-
-const titleStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-heading)',
-  fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-  fontWeight: 800,
-  color: '#2d3a2d',
-  textTransform: 'uppercase',
-  margin: '0 0 16px 0',
-  lineHeight: 1,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-body)',
-  fontSize: '1.1rem',
-  color: '#999',
-  maxWidth: 500,
-  margin: '0 auto',
-}
-
-const bodyText: React.CSSProperties = {
-  fontFamily: 'var(--font-body)',
-  fontSize: '1rem',
-  color: '#666',
-  lineHeight: 1.7,
-  maxWidth: 700,
-  margin: '20px auto 0',
-  textAlign: 'left',
-}
-
-const gridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-  gap: 20,
-  marginTop: 40,
-  width: '100%',
-}
-
-const cardStyle: React.CSSProperties = {
-  border: '1.5px dashed #ccc',
-  borderRadius: 10,
-  padding: '32px 20px',
-  textAlign: 'center',
-  background: '#fafafa',
-}
-
-const cardTitle: React.CSSProperties = {
-  fontFamily: 'var(--font-heading)',
-  fontWeight: 700,
-  fontSize: '1rem',
-  color: '#2d3a2d',
-  margin: '0 0 6px 0',
-}
-
-const cardSub: React.CSSProperties = {
-  fontFamily: 'var(--font-body)',
-  fontSize: '0.85rem',
-  color: '#999',
-  margin: 0,
-}
-
-const listItem: React.CSSProperties = {
-  fontFamily: 'var(--font-body)',
-  fontSize: '0.95rem',
-  color: '#666',
-  lineHeight: 1.7,
-  padding: '12px 0',
-  borderBottom: '1px dashed #ddd',
-  textAlign: 'left',
-}
-
-const marketCard: React.CSSProperties = {
-  border: '1.5px dashed #ccc',
-  borderRadius: 10,
-  padding: '24px 20px',
-  textAlign: 'center',
-  background: '#fafafa',
-}
-
-const marketRegion: React.CSSProperties = {
-  fontFamily: 'var(--font-heading)',
-  fontWeight: 700,
-  fontSize: '0.95rem',
-  color: '#2d3a2d',
-  margin: '0 0 6px 0',
-  textTransform: 'uppercase',
-}
-
-const marketCountries: React.CSSProperties = {
-  fontFamily: 'var(--font-body)',
-  fontSize: '0.85rem',
-  color: '#999',
-  margin: 0,
-}
-
-const ctaButton: React.CSSProperties = {
-  display: 'inline-block',
-  marginTop: 24,
-  padding: '14px 40px',
-  fontFamily: 'var(--font-heading)',
-  fontWeight: 700,
-  fontSize: '0.9rem',
-  letterSpacing: '0.08em',
-  color: '#fff',
-  background: '#d4812a',
-  border: 'none',
-  borderRadius: 8,
-  textDecoration: 'none',
-  textTransform: 'uppercase',
-  cursor: 'pointer',
-}
-
-const productKeys = [
-  'inshell',
-  'shelled',
-  'blanched',
-  'roasted',
-  'paste',
-  'cocoa',
-  'praline',
-  'dragees',
-] as const
-
-const packagingKeys = ['maxibags', 'ventilated', 'boxes', 'labeling'] as const
-
-const markets = [
-  { region: 'Europe', key: 'europe' },
-  { region: 'South America', key: 'southamerica' },
-  { region: 'Asia', key: 'asia' },
-  { region: 'Oceania', key: 'oceania' },
-] as const
 
 export default function Products() {
   const { t } = useTranslation()
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoaded(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <div className="page-container" style={{ overflow: 'auto', height: '100vh' }}>
       <Navbar />
 
-      {/* Hero */}
-      <section style={sectionStyle('#fff')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('products.hero.label')}</p>
-          <h2 style={titleStyle}>{t('products.hero.title')}</h2>
-          <p style={subtitleStyle}>{t('products.hero.subtitle')}</p>
+      {/* Hero Section */}
+      <section className="products-hero">
+        <div className="products-hero__content">
+          <span className="products-hero__label">{t('products.hero.label')}</span>
+
+          {/* Desktop title - staggered lines */}
+          <h1 className="products-hero__title">
+            <span className="line-reveal">
+              <span className={`line-reveal__inner ${isLoaded ? 'revealed' : ''}`}>
+                {t('products.hero.title').split(' ').slice(0, 2).join(' ')}
+              </span>
+            </span>
+            <span className="line-reveal">
+              <span className={`line-reveal__inner line-reveal__inner--delay1 ${isLoaded ? 'revealed' : ''}`}>
+                {t('products.hero.title').split(' ').slice(2).join(' ')}
+              </span>
+            </span>
+          </h1>
+
+          <p className={`products-hero__subtitle ${isLoaded ? 'fade-in-up' : ''}`}>
+            {t('products.hero.subtitle')}
+          </p>
         </div>
       </section>
 
-      {/* Products Grid */}
-      <section style={autoSection('#f8f8f8')}>
-        <div style={{ ...wireframeBox, maxWidth: 1100 }}>
-          <p style={labelStyle}>{t('products.grid.label')}</p>
-          <h2 style={titleStyle}>{t('products.grid.title')}</h2>
-          <p style={subtitleStyle}>{t('products.grid.subtitle')}</p>
-          <div style={gridStyle}>
-            {productKeys.map((key) => (
-              <div key={key} style={cardStyle}>
-                <p style={cardTitle}>{t(`products.item.${key}.name`)}</p>
-                <p style={cardSub}>{t(`products.item.${key}.desc`)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Spacer */}
+      <div style={{ height: '4rem', background: '#fff' }} />
+
+      {/* Product Sections */}
+      <section>
+        <ProductSection
+          title={t('products.item.inshell.name')}
+          subtitle={t('products.grid.label')}
+          description={t('products.item.inshell.desc')}
+        />
+        <ProductSection
+          title={t('products.item.shelled.name')}
+          subtitle={t('products.grid.label')}
+          description={t('products.item.shelled.desc')}
+          reverse
+        />
+        <ProductSection
+          title={t('products.item.blanched.name')}
+          subtitle={t('products.grid.label')}
+          description={t('products.item.blanched.desc')}
+        />
+        <ProductSection
+          title={t('products.item.roasted.name')}
+          subtitle={t('products.grid.label')}
+          description={t('products.item.roasted.desc')}
+          reverse
+        />
       </section>
 
-      {/* Packaging */}
-      <section style={autoSection('#fff')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('products.packaging.label')}</p>
-          <h2 style={titleStyle}>{t('products.packaging.title')}</h2>
-          <div style={{ marginTop: 20 }}>
-            {packagingKeys.map((key) => (
-              <div key={key} style={listItem}>
-                {t(`products.packaging.${key}`)}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Markets */}
-      <section style={autoSection('#f8f8f8')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('products.markets.label')}</p>
-          <h2 style={titleStyle}>{t('products.markets.title')}</h2>
-          <div style={{ ...gridStyle, gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
-            {markets.map(({ region, key }) => (
-              <div key={key} style={marketCard}>
-                <p style={marketRegion}>{region}</p>
-                <p style={marketCountries}>{t(`products.markets.${key}`)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Certifications */}
-      <section style={autoSection('#fff')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('products.cert.label')}</p>
-          <h2 style={titleStyle}>{t('products.cert.title')}</h2>
-          <p style={bodyText}>{t('products.cert.subtitle')}</p>
-        </div>
-      </section>
-
-      {/* CTA Contact */}
-      <section style={sectionStyle('#f8f8f8')}>
-        <div style={wireframeBox}>
-          <p style={labelStyle}>{t('products.cta.label')}</p>
-          <h2 style={titleStyle}>{t('products.cta.title')}</h2>
-          <p style={subtitleStyle}>{t('products.cta.subtitle')}</p>
-          <Link to="/contact" style={ctaButton}>{t('products.cta.button')}</Link>
+      {/* CTA Section */}
+      <section className="products-cta">
+        <div className="products-cta__inner">
+          <span className="products-cta__label">{t('products.cta.label')}</span>
+          <h2 className="products-cta__title">{t('products.cta.title')}</h2>
+          <p className="products-cta__subtitle">{t('products.cta.subtitle')}</p>
+          <ArrowCTA label={t('products.cta.button')} to="/contact" />
         </div>
       </section>
     </div>
