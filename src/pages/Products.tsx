@@ -68,45 +68,37 @@ export default function Products() {
   }, [])
 
   return (
-    <div className="page-container" style={{ overflow: 'auto', height: '100vh' }}>
+    <div className="page-container products-snap-container">
       <Navbar />
 
-      {/* Hero Section — sticky with video */}
-      <div className="products-hero-container">
-        <section className="products-hero-sticky">
-          <div className="products-hero-inner">
-            {/* Label above video */}
-            <span className="products-hero__label">{t('products.hero.label')}</span>
+      {/* Hero Section — max 100vh */}
+      <section className="products-hero-container">
+        <div className="products-hero-inner">
+          <span className="products-hero__label">{t('products.hero.label')}</span>
 
-            {/* Video */}
-            <div className={`products-hero-video ${isLoaded ? 'products-hero-video--loaded' : ''}`}>
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="products-hero-video__el"
-              >
-                <source src="/avellanosproduct.mp4" type="video/mp4" />
-              </video>
-            </div>
-
-            {/* Bottom: title left + subtitle right, CTA below */}
-            <div className="products-hero-bottom">
-              <div className={`products-hero-bottom__left ${isLoaded ? 'fade-in-up' : ''}`}>
-                <h1 className="products-hero__title-sm">{t('products.hero.title')}</h1>
-                <ArrowCTA label={t('products.cta.button')} to="/contact" />
-              </div>
-              <p className={`products-hero-bottom__text ${isLoaded ? 'fade-in-up' : ''}`}>
-                {t('products.hero.subtitle')}
-              </p>
-            </div>
+          <div className={`products-hero-video ${isLoaded ? 'products-hero-video--loaded' : ''}`}>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="products-hero-video__el"
+            >
+              <source src="/avellanosproduct.mp4" type="video/mp4" />
+            </video>
           </div>
-        </section>
-      </div>
 
-      {/* Spacer */}
-      <div style={{ height: '4rem', background: '#fff' }} />
+          <div className="products-hero-bottom">
+            <div className={`products-hero-bottom__left ${isLoaded ? 'fade-in-up' : ''}`}>
+              <h1 className="products-hero__title-sm">{t('products.hero.title')}</h1>
+              <ArrowCTA label={t('products.cta.button')} to="/contact" />
+            </div>
+            <p className={`products-hero-bottom__text ${isLoaded ? 'fade-in-up' : ''}`}>
+              {t('products.hero.subtitle')}
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Product Sections */}
       <section>
