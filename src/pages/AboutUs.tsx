@@ -101,14 +101,20 @@ export default function AboutUs() {
       </section>
 
       {/* Parallax Quote */}
-      <section className="about-parallax">
-        <div className="about-parallax-bg">
-          <img src="/hazelnutfield.png" alt="" className="about-parallax-img" />
-          <div className="about-parallax-overlay" />
-        </div>
+      <section
+        className="about-parallax"
+        style={{
+          backgroundImage: "url('/hazelnutfield.png')",
+          backgroundAttachment: "fixed",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="about-parallax-overlay" />
         <div className="about-parallax-content">
           <p className="about-parallax-quote">
-            "To produce, process and commercialize world-class European hazelnuts, vertically integrating the entire value chain"
+            {t('aboutus.parallax.quote')}
           </p>
         </div>
       </section>
