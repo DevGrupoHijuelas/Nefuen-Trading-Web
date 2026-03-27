@@ -40,26 +40,43 @@ export default function AboutUs() {
       <div ref={heroContainerRef} className="about-hero-container">
         <section className="about-hero-sticky">
           <div className="about-hero-inner">
-            <div className="about-hero-title-row">
-              <span className="about-label">{t('aboutus.hero.label')}</span>
-              <h1 ref={titleRef} className="about-hero-title">
-                {t('aboutus.hero.title')}
-              </h1>
-            </div>
+            {/* Label on top like Products */}
+            <span className="about-label" style={{ marginTop: '1.5rem' }}>{t('aboutus.hero.label')}</span>
 
-            {/* Image placeholder */}
+            {/* Hero Image */}
             <div ref={imageRef} className="about-hero-image">
-              <div className="about-hero-image-placeholder">
-                <span>Nefuen Trading</span>
-              </div>
+              <img
+                src="/aboutus.jpg"
+                alt="Nefuen Trading"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
             </div>
 
-            {/* CTA + Text row */}
-            <div className="about-hero-bottom">
-              <div ref={textLeftRef} className="about-hero-cta-col">
+            {/* Title + CTA + Text row below image (Products style) */}
+            <div className="about-hero-bottom" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem', marginTop: '12px' }}>
+              <div ref={textLeftRef}>
+                <h1 ref={titleRef} style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: 'clamp(1.2rem, 2vw, 1.6rem)',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.02em',
+                  color: 'var(--green-deep)',
+                  margin: '0 0 16px'
+                }}>
+                  {t('aboutus.hero.title')}
+                </h1>
                 <ArrowCTA label={t('nav.productos')} to="/products" />
               </div>
-              <p ref={textRightRef} className="about-hero-text">
+              <p ref={textRightRef} style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+                color: '#6b6b6b',
+                maxWidth: '400px',
+                lineHeight: 1.5,
+                textAlign: 'right',
+                margin: 0
+              }}>
                 {t('aboutus.hero.subtitle')}
               </p>
             </div>

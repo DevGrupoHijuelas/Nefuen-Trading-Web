@@ -26,16 +26,9 @@ export default function ArrowCTA({ label, to, variant = 'dark' }: ArrowCTAProps)
           <path d="M20 27H27V20" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
         </svg>
         <span className="arrow-cta__swap">
-          {/* Arrow — visible by default, slides out on hover */}
+          {/* Hazelnut — visible by default, slides out on hover */}
           <svg
-            className={`arrow-cta__svg ${isHovered ? 'arrow-out' : 'arrow-visible'}`}
-            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-          >
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
-          {/* Hazelnut — slides in on hover */}
-          <svg
-            className={`arrow-cta__svg arrow-cta__hazelnut ${isHovered ? 'arrow-visible' : 'arrow-in'}`}
+            className={`arrow-cta__svg arrow-cta__hazelnut ${isHovered ? 'arrow-out' : 'arrow-visible'}`}
             viewBox="0 0 50.529 50.529"
             fill="currentColor"
             stroke="none"
@@ -68,6 +61,13 @@ export default function ArrowCTA({ label, to, variant = 'dark' }: ArrowCTAProps)
               c0.056-2.688,0.93-6.235,4.084-9.947l1.757-2.067l-2.593,0.419l-0.081,0.012c-0.012,0.002-0.042,0.006-0.083,0.009
               c-0.013,0.001-0.033,0.002-0.05,0.003c-0.023,0.002-0.05,0.003-0.079,0.005c-0.887,0.034-4.515-0.166-8.597-5.245l-0.286-0.355
               c-0.192-0.249-0.384-0.49-0.577-0.762c7.693-2.478,15.852,0.106,23.114,7.369C47.294,17.468,49.91,25.535,47.572,33.148z"/>
+          </svg>
+          {/* Arrow — slides in on hover */}
+          <svg
+            className={`arrow-cta__svg ${isHovered ? 'arrow-visible' : 'arrow-in'}`}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+          >
+            <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         </span>
       </span>
