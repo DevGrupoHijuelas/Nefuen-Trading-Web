@@ -2017,7 +2017,7 @@ body {
 }
 
 .about-team-inner {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -2035,53 +2035,221 @@ body {
   font-family: var(--font-body);
   font-size: 1rem;
   color: rgba(0, 0, 0, 0.5);
-  margin: 0 0 40px;
+  margin: 0 0 60px;
 }
 
-.about-team-grid {
+/*
+  Inertia editorial layout — 12-col + fine row grid.
+  Uses grid-row to break horizontal alignment.
+  Each row unit = ~40px via grid-auto-rows.
+
+  Visual map (approximate):
+  Row 1-2:   [ 1-JORGE large ]  [ 2-ALFREDO small ]
+  Row 3-4:                         [ 3-MACARENA tall ]  [ 4-ALEX small ]
+  Row 5-6:   [ 5-DANIELA med ] [ 6-ELIZABETH sm ]       [ 7-DANIELA sm ]
+*/
+
+/* Inertia-style 12-column editorial grid — desktop */
+.team-grid-inertia {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 40px;
+  gap: 16px 24px;
 }
 
-.about-team-card {
-  text-align: center;
+.team-card-inertia {
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-.about-team-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #ddd;
-  margin: 0 auto 12px;
+.team-card-inertia__photo {
+  flex: 1;
+  width: 100%;
+  background: #e0ddd8;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: rgba(0, 0, 0, 0.25);
-  filter: grayscale(100%);
-  transition: filter 300ms ease;
+  overflow: hidden;
+  transition: transform 400ms ease;
 }
 
-.about-team-card:hover .about-team-avatar {
-  filter: grayscale(0%);
+.team-card-inertia:hover .team-card-inertia__photo {
+  transform: scale(1.02);
 }
 
-.about-team-name {
+/* Card 1 — Jorge: LARGE anchor, top-left */
+.team-card-inertia:nth-child(1) {
+  grid-column: 1 / span 5;
+  grid-row: 1 / span 8;
+}
+
+/* Card 2 — Alfredo: SMALL, beside card 1 (more height) */
+.team-card-inertia:nth-child(2) {
+  grid-column: 6 / span 2;
+  grid-row: 1 / span 5;
+}
+
+/* Card 3 — Macarena: TALL hero, center-right (moved up more) */
+.team-card-inertia:nth-child(3) {
+  grid-column: 8 / span 3;
+  grid-row: 4 / span 8;
+}
+
+/* Card 4 — Alex: SMALL, far right (moved up, more height) */
+.team-card-inertia:nth-child(4) {
+  grid-column: 11 / span 2;
+  grid-row: 4 / span 5;
+}
+
+/* Card 5 — Daniela G: medium, bottom-left */
+.team-card-inertia:nth-child(5) {
+  grid-column: 1 / span 5;
+  grid-row: 12 / span 6;
+}
+
+/* Card 6 — Elizabeth: small, next to card 5 */
+.team-card-inertia:nth-child(6) {
+  grid-column: 6 / span 2;
+  grid-row: 12 / span 5;
+}
+
+/* Card 7 — Daniela V: small, far right bottom */
+.team-card-inertia:nth-child(7) {
+  grid-column: 11 / span 2;
+  grid-row: 13 / span 5;
+}
+
+.team-card-inertia__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  padding-right: 4px;
+  flex-shrink: 0;
+}
+
+.team-card-inertia__name {
   font-family: var(--font-heading);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   color: #1a1a1a;
-  margin: 0 0 4px;
+  margin: 0 0 2px;
 }
 
-.about-team-role {
+.team-card-inertia__role {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: rgba(0, 0, 0, 0.5);
   margin: 0;
+}
+
+.team-card-inertia__arrow {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #1a1a1a;
+  margin-top: 2px;
+}
+
+.team-card-inertia__photo {
+  width: 100%;
+  height: 380px;
+  background: #e0ddd8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 400ms ease;
+}
+
+.team-card-inertia:hover .team-card-inertia__photo {
+  transform: scale(1.02);
+}
+
+.team-card-inertia__initial {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.08);
+}
+
+/* Mobile gallery + dots — hidden on desktop */
+.team-gallery-mobile {
+  display: none;
+}
+
+.team-gallery-dots {
+  display: none;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .team-grid-inertia {
+    display: none;
+  }
+
+  .team-gallery-mobile {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 20px;
+    margin: 0 -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .team-gallery-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .team-gallery-card {
+    min-width: 75vw;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .team-gallery-card .team-card-inertia__photo {
+    width: 100%;
+    height: 350px;
+    background: #e0ddd8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .team-gallery-card .team-card-inertia__header {
+    margin-bottom: 12px;
+  }
+
+  .team-gallery-card .team-card-inertia__initial {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.08);
+  }
+
+  .team-gallery-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 16px;
+  }
+
+  .team-gallery-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .team-gallery-dot:first-child {
+    background: rgba(0, 0, 0, 0.7);
+  }
 }
 
 /* Video Break — cinematic scroll-through */
@@ -2271,10 +2439,6 @@ body {
 
   .about-team-section {
     padding: 120px 48px;
-  }
-
-  .about-team-grid {
-    grid-template-columns: repeat(4, 1fr);
   }
 
   .about-grupo-section {

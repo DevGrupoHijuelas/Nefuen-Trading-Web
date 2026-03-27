@@ -114,21 +114,54 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Team */}
+      {/* Team — Inertia-style staggered grid */}
       <section className="about-team-section">
         <div className="about-team-inner">
           <span className="about-label">{t('aboutus.team.label')}</span>
           <h2 className="about-team-title">{t('aboutus.team.title')}</h2>
           <p className="about-team-subtitle">{t('aboutus.team.subtitle')}</p>
-          <div className="about-team-grid">
+
+          {/* Desktop: staggered grid */}
+          <div className="team-grid-inertia">
             {teamMembers.map((i) => (
-              <div key={i} className="about-team-card">
-                <div className="about-team-avatar">
-                  <span>{t(`aboutus.team.members.${i}.name`).charAt(0)}</span>
+              <div key={i} className="team-card-inertia">
+                <div className="team-card-inertia__header">
+                  <div>
+                    <p className="team-card-inertia__name">{t(`aboutus.team.members.${i}.name`)}</p>
+                    <p className="team-card-inertia__role">{t(`aboutus.team.members.${i}.role`)}</p>
+                  </div>
+                  <svg className="team-card-inertia__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 5v14M5 12l7 7 7-7" />
+                  </svg>
                 </div>
-                <p className="about-team-name">{t(`aboutus.team.members.${i}.name`)}</p>
-                <p className="about-team-role">{t(`aboutus.team.members.${i}.role`)}</p>
+                <div className="team-card-inertia__photo">
+                  <span className="team-card-inertia__initial">{t(`aboutus.team.members.${i}.name`).charAt(0)}</span>
+                </div>
               </div>
+            ))}
+          </div>
+
+          {/* Mobile: horizontal scroll gallery */}
+          <div className="team-gallery-mobile">
+            {teamMembers.map((i) => (
+              <div key={i} className="team-gallery-card">
+                <div className="team-card-inertia__header">
+                  <div>
+                    <p className="team-card-inertia__name">{t(`aboutus.team.members.${i}.name`)}</p>
+                    <p className="team-card-inertia__role">{t(`aboutus.team.members.${i}.role`)}</p>
+                  </div>
+                </div>
+                <div className="team-card-inertia__photo">
+                  <span className="team-card-inertia__initial">{t(`aboutus.team.members.${i}.name`).charAt(0)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile dot indicators */}
+          <div className="team-gallery-dots">
+            {teamMembers.map((i) => (
+              <span key={i} className="team-gallery-dot" />
             ))}
           </div>
         </div>
