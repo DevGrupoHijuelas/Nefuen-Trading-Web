@@ -407,6 +407,13 @@ body {
   transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.arrow-cta__hazelnut {
+  width: 16px;
+  height: 16px;
+  top: -1px;
+  left: -1px;
+}
+
 .arrow-cta__label {
   font-family: var(--font-heading);
   font-size: 0.8rem;
@@ -1361,6 +1368,7 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.2em;
+  margin-top: 1.5rem;
   text-transform: uppercase;
   color: rgba(0, 0, 0, 0.4);
   margin-bottom: 16px;
@@ -1458,6 +1466,7 @@ body {
   line-height: 1.6;
   color: rgba(0, 0, 0, 0.7);
   margin: 0;
+  text-align: right;
   padding-top: 4px;
   opacity: 0;
   transform: translateY(16px);

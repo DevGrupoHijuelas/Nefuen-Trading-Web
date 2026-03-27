@@ -48,7 +48,7 @@ export default function Navbar({ visible = true }: NavbarProps) {
             onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
           >
             <span className="lang-slide-top">{lang === 'en' ? 'EN' : 'ES'}</span>
-            <span className="lang-slide-bottom">{lang === 'en' ? 'EN' : 'ES'}</span>
+            <span className="lang-slide-bottom">{lang === 'en' ? 'ES' : 'EN'}</span>
           </button>
         </div>
 
@@ -59,7 +59,7 @@ export default function Navbar({ visible = true }: NavbarProps) {
             onClick={() => setLang(lang === 'en' ? 'es' : 'en')}
           >
             <span className="lang-slide-top">{lang === 'en' ? 'EN' : 'ES'}</span>
-            <span className="lang-slide-bottom">{lang === 'en' ? 'EN' : 'ES'}</span>
+            <span className="lang-slide-bottom">{lang === 'en' ? 'ES' : 'EN'}</span>
           </button>
           <button
             className={`hamburger ${isMenuOpen ? 'hamburger--open' : ''}`}
