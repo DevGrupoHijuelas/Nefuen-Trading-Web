@@ -1937,7 +1937,7 @@ body {
 .about-parallax-bg-img {
   position: absolute;
   inset: 0;
-  background-image: url('/hazelnutfield.png');
+  background-image: url('/hazelnutfield.webp');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;

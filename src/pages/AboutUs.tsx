@@ -46,7 +46,7 @@ export default function AboutUs() {
             {/* Hero Image */}
             <div ref={imageRef} className="about-hero-image">
               <img
-                src="/aboutus.jpg"
+                src="/aboutus.webp"
                 alt="Nefuen Trading"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
