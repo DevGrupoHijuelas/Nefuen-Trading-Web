@@ -53,30 +53,14 @@ export default function AboutUs() {
             </div>
 
             {/* Title + CTA + Text row below image (Products style) */}
-            <div className="about-hero-bottom" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem', marginTop: '12px' }}>
-              <div ref={textLeftRef}>
-                <h1 ref={titleRef} style={{
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: 'clamp(1.2rem, 2vw, 1.6rem)',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.02em',
-                  color: 'var(--green-deep)',
-                  margin: '0 0 16px'
-                }}>
+            <div className="about-hero-bottom">
+              <div ref={textLeftRef} className="about-hero-cta-col">
+                <h1 ref={titleRef} className="about-hero-title-inline">
                   {t('aboutus.hero.title')}
                 </h1>
                 <ArrowCTA label={t('nav.productos')} to="/products" />
               </div>
-              <p ref={textRightRef} style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
-                color: '#6b6b6b',
-                maxWidth: '400px',
-                lineHeight: 1.5,
-                textAlign: 'right',
-                margin: 0
-              }}>
+              <p ref={textRightRef} className="about-hero-text">
                 {t('aboutus.hero.subtitle')}
               </p>
             </div>

@@ -90,6 +90,13 @@ export default function Navbar({ visible = true }: NavbarProps) {
 
       {/* Mobile full-screen menu */}
       <div className={`mobile-menu ${isMenuOpen ? 'mobile-menu--open' : ''}`}>
+        <button
+          className="mobile-menu__close"
+          onClick={() => setIsMenuOpen(false)}
+          aria-label="Close menu"
+        >
+          CLOSE
+        </button>
         <div className="mobile-menu__content">
           <nav className="mobile-menu__nav">
             {navItems.map((item, i) => {

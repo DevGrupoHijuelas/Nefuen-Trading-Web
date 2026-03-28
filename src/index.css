@@ -271,6 +271,23 @@ body {
   pointer-events: auto;
 }
 
+.mobile-menu__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 260;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1a1a1a;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px;
+}
+
 .mobile-menu__content {
   height: 100%;
   display: flex;
@@ -1850,13 +1867,26 @@ body {
 }
 
 .about-hero-bottom {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-top: 12px;
 }
 
 .about-hero-cta-col {
-  display: none;
+  display: block;
+}
+
+.about-hero-title-inline {
+  font-family: var(--font-heading);
+  font-size: clamp(0.95rem, 3.2vw, 1.6rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--green-deep);
+  margin: 0 0 16px;
+  white-space: nowrap;
 }
 
 .about-cta-link {
@@ -1878,10 +1908,12 @@ body {
 
 .about-hero-text {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
   display: none;
-  line-height: 1.6;
-  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.5;
+  color: #6b6b6b;
+  max-width: 400px;
+  text-align: right;
   margin: 0;
 }
 
