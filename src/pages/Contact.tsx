@@ -36,7 +36,7 @@ export default function Contact() {
   useEffect(() => {
     // Wait for grecaptcha script to load
     const check = setInterval(() => {
-      if (window.grecaptcha?.render) {
+      if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
         onCaptchaLoad()
         clearInterval(check)
       }
