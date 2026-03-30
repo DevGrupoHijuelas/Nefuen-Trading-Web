@@ -78,7 +78,7 @@ export default function AboutUs() {
               <p className="about-concept-text">{t('aboutus.story.subtitle')}</p>
             </div>
             <div className="about-concept-image">
-              <span>{t('aboutus.story.label')}</span>
+              <img src="/hist.webp" alt="Nefuen Trading history" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
           </div>
         </div>
