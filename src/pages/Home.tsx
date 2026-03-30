@@ -133,7 +133,6 @@ export default function Home() {
 
     let touchStartY = 0
     let touchCurrentY = 0
-    let touchStartX = 0
     let wasAtBoundaryOnStart = false
     let lastTouchScrollLeft = 0
 
@@ -190,7 +189,6 @@ export default function Home() {
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY
-      touchStartX = e.touches[0].clientX
       touchCurrentY = touchStartY
       wasAtBoundaryOnStart = false
       if (isScrollSection()) {
