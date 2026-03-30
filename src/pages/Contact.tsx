@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import { useTranslation } from '../i18n/LanguageContext'
+
+type FormStatus = 'idle' | 'sending' | 'success' | 'error'
 
 const sectionStyle = (bg: string): React.CSSProperties => ({
   minHeight: '100vh',
@@ -145,6 +148,32 @@ const recipientNote: React.CSSProperties = {
 
 export default function Contact() {
   const { t } = useTranslation()
+  const [status, setStatus] = useState<FormStatus>('idle')
+  const [form, setForm] = useState({ name: '', email: '', company: '', message: '' })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('sending')
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+
+      if (!res.ok) throw new Error('Failed')
+
+      setStatus('success')
+      setForm({ name: '', email: '', company: '', message: '' })
+    } catch {
+      setStatus('error')
+    }
+  }
 
   return (
     <div className="page-container" style={{ overflow: 'auto', height: '100vh' }}>
@@ -166,7 +195,7 @@ export default function Contact() {
               </p>
             </div>
             <div style={infoCard}>
-              <p style={infoLabel}>Address</p>
+              <p style={infoLabel}>{t('contact.addressLabel')}</p>
               <p style={infoValue}>{t('contact.address')}</p>
             </div>
             <div style={infoCard}>
@@ -192,20 +221,85 @@ export default function Contact() {
       {/* Contact Form */}
       <section style={autoSection('#f8f8f8')}>
         <div style={wireframeBox}>
-          <p style={labelStyle}>SEND US A MESSAGE</p>
-          <h2 style={{ ...titleStyle, fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>CONTACT FORM</h2>
-          <form
-            style={formContainer}
-            onSubmit={(e) => { e.preventDefault() }}
-          >
-            <input type="text" placeholder="Name" style={inputStyle} />
-            <input type="email" placeholder="Email" style={inputStyle} />
-            <input type="text" placeholder="Company" style={inputStyle} />
-            <textarea placeholder="Message" style={textareaStyle} />
-            <button type="submit" style={submitButton}>Submit</button>
-          </form>
+          <p style={labelStyle}>{t('contact.form.label')}</p>
+          <h2 style={{ ...titleStyle, fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>{t('contact.form.title')}</h2>
+
+          {status === 'success' ? (
+            <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+              <p style={{ fontSize: '2.5rem', margin: '0 0 16px 0' }}>&#10003;</p>
+              <p style={{ ...titleStyle, fontSize: '1.3rem', color: '#2d7a2d' }}>
+                {t('contact.form.success')}
+              </p>
+              <p style={{ ...subtitleStyle, marginTop: 8 }}>
+                {t('contact.form.successDetail')}
+              </p>
+              <button
+                type="button"
+                onClick={() => setStatus('idle')}
+                style={{ ...submitButton, marginTop: 24, background: '#666' }}
+              >
+                {t('contact.form.sendAnother')}
+              </button>
+            </div>
+          ) : (
+            <form style={formContainer} onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="name"
+                placeholder={t('contact.form.name')}
+                style={inputStyle}
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder={t('contact.form.email')}
+                style={inputStyle}
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="text"
+                name="company"
+                placeholder={t('contact.form.company')}
+                style={inputStyle}
+                value={form.company}
+                onChange={handleChange}
+              />
+              <textarea
+                name="message"
+                placeholder={t('contact.form.message')}
+                style={textareaStyle}
+                value={form.message}
+                onChange={handleChange}
+                required
+              />
+
+              {status === 'error' && (
+                <p style={{ color: '#c0392b', fontFamily: 'var(--font-body)', fontSize: '0.9rem', margin: 0 }}>
+                  {t('contact.form.error')}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === 'sending'}
+                style={{
+                  ...submitButton,
+                  opacity: status === 'sending' ? 0.6 : 1,
+                  cursor: status === 'sending' ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {status === 'sending' ? t('contact.form.sending') : t('contact.form.submit')}
+              </button>
+            </form>
+          )}
+
           <p style={recipientNote}>
-            Messages will be received by: Daniela V&aacute;squez, Macarena Kremer, Elizabeth Ceriani
+            {t('contact.form.recipients')}
           </p>
         </div>
       </section>
