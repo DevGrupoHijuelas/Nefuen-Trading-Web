@@ -57,6 +57,12 @@ body {
   will-change: transform;
 }
 
+/* Hide reveal-text in CSS so stale GSAP state doesn't flash on F5 */
+.reveal-text {
+  visibility: hidden;
+  opacity: 0;
+}
+
 .fullpage-section {
   width: 100vw;
   height: 100vh;

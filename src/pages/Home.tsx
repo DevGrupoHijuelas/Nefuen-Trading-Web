@@ -97,15 +97,20 @@ export default function Home() {
     return () => { clearTimeout(timer) }
   }, [sceneLoaded])
 
-  // Reset to section 0 on mount
+  // Reset to section 0 on mount — clear all GSAP inline styles
   useEffect(() => {
     currentSection.current = 0
     setActiveSection(0)
     isAnimating.current = false
+    scrollLockAt.current = 0
+    galleryBoundaryAt.current = 0
     window.dispatchEvent(new CustomEvent('section-change', { detail: { section: 0, progress: 0 } }))
     if (wrapperRef.current) {
+      gsap.killTweensOf(wrapperRef.current)
+      gsap.set(wrapperRef.current, { y: 0, clearProps: 'all' })
       wrapperRef.current.style.transform = 'translateY(0)'
     }
+    window.scrollTo(0, 0)
   }, [])
 
   // Restore overflow when leaving home
