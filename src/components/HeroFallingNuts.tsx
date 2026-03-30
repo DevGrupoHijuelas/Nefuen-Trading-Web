@@ -4,6 +4,7 @@ import Hazelnut from './Hazelnut'
 import { cameraProgress } from './Scene'
 
 let heroNutCounter = 0
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
 export default function HeroFallingNuts() {
   const [hazelnuts, setHazelnuts] = useState<{ id: string; position: [number, number, number]; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
@@ -26,10 +27,10 @@ export default function HeroFallingNuts() {
               rotation: [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2] as [number, number, number],
               angVel: [(Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8] as [number, number, number],
             }
-          ].slice(-80)
+          ].slice(isMobile ? -25 : -80)
         })
       }
-      timeout = setTimeout(spawnLoop, 400)
+      timeout = setTimeout(spawnLoop, isMobile ? 800 : 400)
     }
 
     const handleVisibility = () => {

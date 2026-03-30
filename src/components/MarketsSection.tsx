@@ -7,13 +7,23 @@ export default function MarketsSection() {
   const { t } = useTranslation()
   const containerRef = useRef<HTMLDivElement>(null)
   const namesRef = useRef<HTMLSpanElement[]>([])
+  const hazelnutRef = useRef<HTMLDivElement>(null)
 
-  const updateNames = useCallback(() => {
+  const updateVisuals = useCallback(() => {
     const container = containerRef.current
     if (!container) return
 
     const viewportW = container.clientWidth
     const focusX = viewportW * 0.38
+
+    // Rotate hazelnut based on scroll progress
+    if (hazelnutRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = container
+      const maxScroll = scrollWidth - clientWidth
+      const progress = maxScroll > 0 ? scrollLeft / maxScroll : 0
+      const rotation = progress * 360
+      hazelnutRef.current.style.transform = `translateX(-50%) rotate(${rotation}deg)`
+    }
 
     namesRef.current.forEach((el) => {
       if (!el) return
@@ -26,10 +36,9 @@ export default function MarketsSection() {
 
       const ratio = Math.min(distance / maxDist, 1)
 
-      // Globe arc: tight radius, steep curve
       const angle = ratio * (Math.PI * 0.45)
       const arcRadius = 150
-      const arcY = arcRadius * (1 - Math.cos(angle)) // curve down
+      const arcY = arcRadius * (1 - Math.cos(angle))
 
       const opacity = 1 - ratio * 0.85
       const blur = ratio * 6
@@ -45,26 +54,26 @@ export default function MarketsSection() {
     const container = containerRef.current
     if (!container) return
 
-    updateNames()
+    updateVisuals()
 
-    container.addEventListener('scroll', updateNames, { passive: true })
-    window.addEventListener('resize', updateNames)
+    container.addEventListener('scroll', updateVisuals, { passive: true })
+    window.addEventListener('resize', updateVisuals)
 
     return () => {
-      container.removeEventListener('scroll', updateNames)
-      window.removeEventListener('resize', updateNames)
+      container.removeEventListener('scroll', updateVisuals)
+      window.removeEventListener('resize', updateVisuals)
     }
-  }, [updateNames])
+  }, [updateVisuals])
 
   // Re-run when section becomes active
   useEffect(() => {
-    const observer = new MutationObserver(updateNames)
+    const observer = new MutationObserver(updateVisuals)
     const container = containerRef.current
     if (container) {
       observer.observe(container, { attributes: true, attributeFilter: ['style'] })
     }
     return () => observer.disconnect()
-  }, [updateNames])
+  }, [updateVisuals])
 
   return (
     <div className="markets-section">
@@ -73,6 +82,28 @@ export default function MarketsSection() {
         <p className="markets-ui__label">{t('transition.label')}</p>
         <h2 className="markets-ui__title">{t('transition.title')}</h2>
         <p className="markets-ui__subtitle">{t('transition.subtitle')}</p>
+      </div>
+
+      {/* Rotating wireframe globe */}
+      <div ref={hazelnutRef} className="markets-globe" aria-hidden="true">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          {/* Outer circle */}
+          <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="0.8" />
+          {/* Equator */}
+          <ellipse cx="100" cy="100" rx="90" ry="20" fill="none" stroke="currentColor" strokeWidth="0.6" />
+          {/* Latitude lines */}
+          <ellipse cx="100" cy="100" rx="90" ry="50" fill="none" stroke="currentColor" strokeWidth="0.4" />
+          <ellipse cx="100" cy="65" rx="72" ry="14" fill="none" stroke="currentColor" strokeWidth="0.4" />
+          <ellipse cx="100" cy="135" rx="72" ry="14" fill="none" stroke="currentColor" strokeWidth="0.4" />
+          <ellipse cx="100" cy="40" rx="42" ry="8" fill="none" stroke="currentColor" strokeWidth="0.3" />
+          <ellipse cx="100" cy="160" rx="42" ry="8" fill="none" stroke="currentColor" strokeWidth="0.3" />
+          {/* Meridian lines */}
+          <ellipse cx="100" cy="100" rx="20" ry="90" fill="none" stroke="currentColor" strokeWidth="0.6" />
+          <ellipse cx="100" cy="100" rx="50" ry="90" fill="none" stroke="currentColor" strokeWidth="0.4" />
+          <ellipse cx="100" cy="100" rx="75" ry="90" fill="none" stroke="currentColor" strokeWidth="0.3" />
+          {/* Vertical axis */}
+          <line x1="100" y1="10" x2="100" y2="190" stroke="currentColor" strokeWidth="0.4" />
+        </svg>
       </div>
 
       {/* Horizontal scrolling globe wheel */}

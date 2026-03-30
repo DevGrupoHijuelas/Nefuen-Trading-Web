@@ -3,6 +3,9 @@ import { useFrame } from '@react-three/fiber'
 import Hazelnut from './Hazelnut'
 import { cameraProgress } from './Scene'
 
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+const MAX_NUTS = isMobile ? 50 : 200
+
 export default function FinalFallingNuts() {
   const [hazelnuts, setHazelnuts] = useState<{ id: number; position: [number, number, number]; rotation: [number, number, number]; angVel: [number, number, number] }[]>([])
   const hasStarted = useRef(false)
@@ -31,23 +34,23 @@ export default function FinalFallingNuts() {
           // First arrival: spawn a small initial batch (not 200 at once)
           hasStarted.current = true
           spawnCount.current = 0
-          setHazelnuts(spawnBatch(30))
-          spawnCount.current = 30
-        } else if (spawnCount.current < 200) {
+          setHazelnuts(spawnBatch(isMobile ? 10 : 30))
+          spawnCount.current = isMobile ? 10 : 30
+        } else if (spawnCount.current < MAX_NUTS) {
           // Gradually ramp up
-          const batchSize = Math.min(10, 200 - spawnCount.current)
-          setHazelnuts(prev => [...prev, ...spawnBatch(batchSize)].slice(-200))
+          const batchSize = Math.min(isMobile ? 5 : 10, MAX_NUTS - spawnCount.current)
+          setHazelnuts(prev => [...prev, ...spawnBatch(batchSize)].slice(-MAX_NUTS))
           spawnCount.current += batchSize
         } else {
           // Maintenance: keep a steady trickle
           setHazelnuts(prev => [
             ...prev,
             ...spawnBatch(2)
-          ].slice(-200))
+          ].slice(-MAX_NUTS))
         }
       }
 
-      timeout = setTimeout(spawnLoop, hasStarted.current && spawnCount.current < 200 ? 150 : 300)
+      timeout = setTimeout(spawnLoop, hasStarted.current && spawnCount.current < MAX_NUTS ? (isMobile ? 300 : 150) : (isMobile ? 600 : 300))
     }
 
     const handleVisibility = () => {

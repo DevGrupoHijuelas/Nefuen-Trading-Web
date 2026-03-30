@@ -3,6 +3,7 @@ import Hazelnut from './Hazelnut'
 import { cameraProgress } from './Scene'
 
 let galleryNutCounter = 0
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
 export default function GalleryFallingNuts() {
   const [hazelnuts, setHazelnuts] = useState<{ id: string; position: [number, number, number]; type: 'kernel' | 'inshell'; rotation: [number, number, number]; angVel: [number, number, number]; gravityScale: number; linearDamping: number }[]>([])
@@ -11,7 +12,7 @@ export default function GalleryFallingNuts() {
     let timeout: ReturnType<typeof setTimeout> | null = null
     let isActive = true
 
-    const initialNuts = Array.from({ length: 150 }, () => ({
+    const initialNuts = Array.from({ length: isMobile ? 40 : 150 }, () => ({
       id: `gallery-init-${galleryNutCounter++}-${Date.now()}`,
       position: [(Math.random() - 0.5) * 20, (Math.random() * 25) - 5, (Math.random() - 0.5) * 8] as [number, number, number],
       type: (Math.random() > 0.5 ? 'kernel' : 'inshell') as 'kernel' | 'inshell',
@@ -41,11 +42,11 @@ export default function GalleryFallingNuts() {
               gravityScale: 0.05 + Math.random() * 0.15,
               linearDamping: 0.5 + Math.random() * 1.5,
             }
-          ].slice(-150)
+          ].slice(isMobile ? -40 : -150)
         })
       }
       
-      timeout = setTimeout(spawnLoop, 150)
+      timeout = setTimeout(spawnLoop, isMobile ? 400 : 150)
     }
 
     const handleVisibility = () => {

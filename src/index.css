@@ -1150,12 +1150,12 @@ body {
 @media (max-width: 768px) {
   /* Gallery: push title below navbar and bring card closer on mobile */
   .gallery-fixed-title {
-    top: 14%;
+    top: 8%;
   }
 
   .gallery-item-wrapper.align-left,
   .gallery-item-wrapper.align-right {
-    padding-top: 20vh;
+    padding-top: 24vh;
   }
 }
 
@@ -1208,6 +1208,27 @@ body {
   color: var(--text-muted);
   margin: 0 auto;
   max-width: 600px;
+}
+
+/* Rotating wireframe globe — half sphere under scroll text */
+.markets-globe {
+  position: absolute;
+  bottom: -55%;
+  left: 50%;
+  transform: translateX(-50%) rotate(0deg);
+  width: clamp(500px, 65vw, 1000px);
+  color: var(--green-brand);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 5;
+  will-change: transform;
+  user-select: none;
+  overflow: hidden;
+}
+
+.markets-globe svg {
+  width: 100%;
+  height: auto;
 }
 
 /* Horizontal scrolling globe wheel */
@@ -1282,6 +1303,12 @@ body {
 
   .markets-name {
     font-size: clamp(1.5rem, 6vw, 2.2rem);
+  }
+
+  .markets-globe {
+    bottom: -25%;
+    width: clamp(300px, 90vw, 500px);
+    opacity: 0.1;
   }
 }
 
