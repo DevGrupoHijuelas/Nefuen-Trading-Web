@@ -12,10 +12,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { name, email, company, message } = req.body
+  const { name, email, company, message, captchaToken } = req.body
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'Missing required fields: name, email, message' })
+  }
+
+  // Verify reCAPTCHA
+  if (!captchaToken) {
+    return res.status(400).json({ error: 'Please complete the captcha' })
+  }
+
+  try {
+    const captchaRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captchaToken}`,
+    })
+    const captchaData = await captchaRes.json()
+    if (!captchaData.success) {
+      return res.status(400).json({ error: 'Captcha verification failed' })
+    }
+  } catch {
+    return res.status(500).json({ error: 'Captcha verification error' })
   }
 
   try {

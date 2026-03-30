@@ -1,5 +1,14 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Navbar from '../components/Navbar'
+
+declare global {
+  interface Window {
+    grecaptcha: {
+      render: (el: HTMLElement, opts: Record<string, unknown>) => number
+      reset: (id?: number) => void
+    }
+  }
+}
 import { useTranslation } from '../i18n/LanguageContext'
 import gsap from 'gsap'
 
@@ -9,7 +18,31 @@ export default function Contact() {
   const { t } = useTranslation()
   const [status, setStatus] = useState<FormStatus>('idle')
   const [form, setForm] = useState({ name: '', email: '', company: '', message: '' })
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const captchaRef = useRef<HTMLDivElement>(null)
+
+  // reCAPTCHA v2 callback
+  const onCaptchaLoad = useCallback(() => {
+    if (captchaRef.current && window.grecaptcha && !captchaRef.current.hasChildNodes()) {
+      window.grecaptcha.render(captchaRef.current, {
+        sitekey: '6Le2Lp4sAAAAAJo4VEstUaG-HQPohY5p6990bx9U',
+        callback: (token: string) => setCaptchaToken(token),
+        'expired-callback': () => setCaptchaToken(null),
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    // Wait for grecaptcha script to load
+    const check = setInterval(() => {
+      if (window.grecaptcha?.render) {
+        onCaptchaLoad()
+        clearInterval(check)
+      }
+    }, 200)
+    return () => clearInterval(check)
+  }, [onCaptchaLoad])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -30,11 +63,13 @@ export default function Contact() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, captchaToken }),
       })
       if (!res.ok) throw new Error('Failed')
       setStatus('success')
       setForm({ name: '', email: '', company: '', message: '' })
+      setCaptchaToken(null)
+      if (window.grecaptcha) window.grecaptcha.reset()
     } catch {
       setStatus('error')
     }
@@ -75,7 +110,9 @@ export default function Contact() {
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                   <circle cx="12" cy="10" r="3"/>
                 </svg>
-                {t('contact.address')}
+                <a href="https://maps.app.goo.gl/8kER97SHkBgbjkYy5" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+                  {t('contact.address')}
+                </a>
               </span>
             </div>
 
@@ -156,9 +193,11 @@ export default function Contact() {
                   <p className="contact-form__error">{t('contact.form.error')}</p>
                 )}
 
+                <div ref={captchaRef} style={{ marginBottom: '16px' }} />
+
                 <button
                   type="submit"
-                  disabled={status === 'sending'}
+                  disabled={status === 'sending' || !captchaToken}
                   className="contact-panel__btn"
                 >
                   {status === 'sending' ? t('contact.form.sending') : t('contact.form.submit')}
@@ -166,7 +205,7 @@ export default function Contact() {
               </form>
             )}
 
-            <p className="contact-panel__recipients">{t('contact.form.recipients')}</p>
+
           </div>
         </div>
       </div>
