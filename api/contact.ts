@@ -4,11 +4,7 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 const RECIPIENTS = [
-  'ggoycoo@gmail.com',
-  // TODO: add production recipients after testing
-  // 'daniela.vasquez@grupohijuelas.com',
-  // 'macarena.kremer@grupohijuelas.com',
-  // 'elizabeth.ceriani@grupohijuelas.com',
+  'infonefuen@grupohijuelas.com',
 ]
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
