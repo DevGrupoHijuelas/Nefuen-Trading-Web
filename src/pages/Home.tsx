@@ -133,11 +133,12 @@ export default function Home() {
 
     let touchStartY = 0
     let touchCurrentY = 0
+    let touchStartX = 0
     let wasAtBoundaryOnStart = false
+    let lastTouchScrollLeft = 0
 
     const handleScroll = (direction: 'down' | 'up', fromGalleryBoundary = false) => {
       if (isAnimating.current) return
-      // Gallery boundary exits have their own protection, skip cooldown for them
       if (!fromGalleryBoundary && Date.now() - scrollLockAt.current < 800) return
       if (direction === 'down') goToSection(currentSection.current + 1)
       else goToSection(currentSection.current - 1)
@@ -169,7 +170,6 @@ export default function Home() {
     const handleWheel = (e: WheelEvent) => {
       const scrollContainer = getScrollContainer()
       if (scrollContainer) {
-        // For horizontal markets section, convert vertical wheel to horizontal scroll
         if (isHorizontalScroll()) {
           scrollContainer.scrollLeft += e.deltaY
         }
@@ -190,6 +190,7 @@ export default function Home() {
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY
+      touchStartX = e.touches[0].clientX
       touchCurrentY = touchStartY
       wasAtBoundaryOnStart = false
       if (isScrollSection()) {
@@ -197,6 +198,9 @@ export default function Home() {
         if (sc) {
           const { isAtStart, isAtEnd } = getScrollBounds(sc)
           wasAtBoundaryOnStart = isAtStart || isAtEnd
+          if (isHorizontalScroll()) {
+            lastTouchScrollLeft = sc.scrollLeft
+          }
         }
       }
     }
@@ -205,6 +209,18 @@ export default function Home() {
       touchCurrentY = e.touches[0].clientY
       if (!isScrollSection()) {
         if (e.cancelable) e.preventDefault()
+      } else if (isHorizontalScroll()) {
+        // Convert vertical touch drag to horizontal scroll
+        const scrollContainer = getScrollContainer()
+        if (!scrollContainer) { if (e.cancelable) e.preventDefault(); return }
+        const deltaY = touchStartY - e.touches[0].clientY
+        scrollContainer.scrollLeft = lastTouchScrollLeft + deltaY * 1.5
+        const { isAtStart, isAtEnd } = getScrollBounds(scrollContainer)
+        // Prevent default to stop vertical page movement
+        if (e.cancelable) e.preventDefault()
+        // Only allow overscroll pull at boundaries
+        if (deltaY > 0 && isAtEnd) { /* allow section change on end */ }
+        if (deltaY < 0 && isAtStart) { /* allow section change on end */ }
       } else {
         const scrollContainer = getScrollContainer()
         if (!scrollContainer) { if (e.cancelable) e.preventDefault(); return }
