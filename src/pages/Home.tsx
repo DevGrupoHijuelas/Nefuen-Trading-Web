@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Canvas } from '@react-three/fiber'
 import Scene from '../components/Scene'
 import FrameSequence from '../components/FrameSequence'
@@ -179,7 +179,7 @@ export default function Home() {
         if (e.deltaY < 0 && !isAtStart) { galleryBoundaryAt.current = 0; return }
         const now = Date.now()
         if (galleryBoundaryAt.current === 0) galleryBoundaryAt.current = now
-        if (now - galleryBoundaryAt.current < 500) { e.preventDefault(); return }
+        if (now - galleryBoundaryAt.current < 300) { e.preventDefault(); return }
         galleryBoundaryAt.current = 0
       }
       e.preventDefault()
@@ -360,6 +360,9 @@ export default function Home() {
               <p className="services-body" style={{ color: 'var(--text-muted)', lineHeight: 1.6, fontSize: '1.05rem', marginTop: '16px' }}>
                 {t('services.body')}
               </p>
+              <Link to="/aboutus" className="cta-button" style={{ marginTop: '24px', display: 'inline-block', textDecoration: 'none' }}>
+                {t('services.cta')}
+              </Link>
             </div>
           </div>
         </section>

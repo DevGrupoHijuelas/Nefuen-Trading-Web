@@ -11,11 +11,12 @@
   "services.label": "WHAT WE DO",
   "services.title": "FROM GENETICS TO MARKET",
   "services.body": "We develop European hazelnuts from the Southern Hemisphere, integrating genetic innovation and high-precision processes for the world's most demanding markets.",
+  "services.cta": "LEARN MORE",
 
   "transition.label": "MARKETS",
   "transition.title": "WE EXPORT TO",
   "transition.subtitle": "From Chile's Patagonia to four continents — Europe, South America, Asia and Oceania — delivering premium hazelnuts to the world's most demanding markets.",
-  "transition.cta": "SEE MORE ↓",
+  "transition.cta": "OUR PRODUCTS",
   "markets.0": "SPAIN",
   "markets.1": "NETHERLANDS",
   "markets.2": "GERMANY",

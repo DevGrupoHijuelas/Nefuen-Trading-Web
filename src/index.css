@@ -1075,6 +1075,14 @@ body {
     line-height: 1.55 !important;
   }
 
+  .section-content.left .services-layout .cta-button {
+    align-self: flex-start;
+    width: auto;
+    margin-top: 16px;
+    font-size: 0.75rem;
+    padding: 12px 28px;
+  }
+
   .transition-content {
     padding: 90px 5% 0;
   }
@@ -1293,7 +1301,7 @@ body {
   .markets-scroll-container {
     height: 55%;
     top: auto;
-    bottom: 10%;
+    bottom: 0%;
   }
 
   .markets-spacer-left,
@@ -1308,7 +1316,7 @@ body {
   .markets-globe {
     bottom: -25%;
     width: clamp(300px, 90vw, 500px);
-    opacity: 0.1;
+    opacity: 0.12;
   }
 }
 
@@ -2175,7 +2183,7 @@ body {
   position: relative;
   aspect-ratio: 4 / 5;
   background: #ddd;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -2687,6 +2695,10 @@ body {
   .about-concept-grid {
     grid-template-columns: 1fr 1fr;
     gap: 80px;
+  }
+
+  .about-concept-image {
+    display: flex;
   }
 
   .about-parallax {

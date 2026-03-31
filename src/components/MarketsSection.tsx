@@ -1,4 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from '../i18n/LanguageContext'
 
 const MARKETS_COUNT = 9
@@ -82,6 +83,9 @@ export default function MarketsSection() {
         <p className="markets-ui__label">{t('transition.label')}</p>
         <h2 className="markets-ui__title">{t('transition.title')}</h2>
         <p className="markets-ui__subtitle">{t('transition.subtitle')}</p>
+        <Link to="/products" className="cta-button" style={{ marginTop: '24px', display: 'inline-block', textDecoration: 'none' }}>
+          {t('transition.cta')}
+        </Link>
       </div>
 
       {/* Rotating wireframe globe */}
