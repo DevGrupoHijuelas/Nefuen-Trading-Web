@@ -2388,39 +2388,27 @@ body {
   grid-row: 1 / span 8;
 }
 
-/* Card 2 — Alfredo: SMALL, beside card 1 (more height) */
+/* Card 2 — Alex Clark: wider, shifted left */
 .team-card-inertia:nth-child(2) {
-  grid-column: 6 / span 2;
-  grid-row: 1 / span 5;
+  grid-column: 6 / span 3;
+  grid-row: 1 / span 7;
 }
 
-/* Card 3 — Macarena: TALL hero, center-right (moved up more) */
+/* Card 3 — Macarena: narrower */
 .team-card-inertia:nth-child(3) {
-  grid-column: 8 / span 3;
+  grid-column: 9 / span 3;
   grid-row: 4 / span 8;
 }
 
-/* Card 4 — Alex: SMALL, far right (moved up, more height) */
+/* Card 4 — Germán: starts higher, bottoms align with Alfredo */
 .team-card-inertia:nth-child(4) {
-  grid-column: 11 / span 2;
-  grid-row: 4 / span 5;
+  grid-column: 2 / span 4;
+  grid-row: 10 / span 8;
 }
 
-/* Card 5 — Daniela G: medium, bottom-left */
+/* Card 5 — Alfredo: shifted left, bottoms align with Germán */
 .team-card-inertia:nth-child(5) {
-  grid-column: 1 / span 5;
-  grid-row: 12 / span 6;
-}
-
-/* Card 6 — Elizabeth: small, next to card 5 */
-.team-card-inertia:nth-child(6) {
-  grid-column: 6 / span 2;
-  grid-row: 12 / span 5;
-}
-
-/* Card 7 — Daniela V: small, far right bottom */
-.team-card-inertia:nth-child(7) {
-  grid-column: 11 / span 2;
+  grid-column: 7 / span 3;
   grid-row: 13 / span 5;
 }
 
@@ -2502,9 +2490,7 @@ body {
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 20px;
-    margin: 0 -24px;
-    padding-left: 24px;
-    padding-right: 24px;
+    margin-right: -24px;
   }
 
   .team-gallery-mobile::-webkit-scrollbar {

@@ -6,7 +6,7 @@ import SiteFooter from '../components/SiteFooter'
 import { useTranslation } from '../i18n/LanguageContext'
 import gsap from 'gsap'
 
-const teamMembers = [0, 1, 2, 3, 4, 5, 6] as const
+const teamMembers = [0, 1, 2, 4, 5] as const
 
 export default function AboutUs() {
   const { t } = useTranslation()
