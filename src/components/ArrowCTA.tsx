@@ -5,10 +5,12 @@ interface ArrowCTAProps {
   label: string
   to: string
   variant?: 'dark' | 'light'
+  externalHovered?: boolean
 }
 
-export default function ArrowCTA({ label, to, variant = 'dark' }: ArrowCTAProps) {
+export default function ArrowCTA({ label, to, variant = 'dark', externalHovered = false }: ArrowCTAProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const active = isHovered || externalHovered
   const colorClass = variant === 'light' ? 'arrow-cta--light' : ''
 
   return (
@@ -20,15 +22,15 @@ export default function ArrowCTA({ label, to, variant = 'dark' }: ArrowCTAProps)
     >
       <span className="arrow-cta__icon">
         <svg className="arrow-cta__brackets" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M1 8V1H8" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
-          <path d="M20 1H27V8" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
-          <path d="M1 20V27H8" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
-          <path d="M20 27H27V20" className={isHovered ? 'bracket-active' : 'bracket-idle'} />
+          <path d="M1 8V1H8" className={active ? 'bracket-active' : 'bracket-idle'} />
+          <path d="M20 1H27V8" className={active ? 'bracket-active' : 'bracket-idle'} />
+          <path d="M1 20V27H8" className={active ? 'bracket-active' : 'bracket-idle'} />
+          <path d="M20 27H27V20" className={active ? 'bracket-active' : 'bracket-idle'} />
         </svg>
         <span className="arrow-cta__swap">
           {/* Hazelnut — visible by default, slides out on hover */}
           <svg
-            className={`arrow-cta__svg arrow-cta__hazelnut ${isHovered ? 'arrow-out' : 'arrow-visible'}`}
+            className={`arrow-cta__svg arrow-cta__hazelnut ${active ? 'arrow-out' : 'arrow-visible'}`}
             viewBox="0 0 50.529 50.529"
             fill="currentColor"
             stroke="none"
@@ -64,14 +66,14 @@ export default function ArrowCTA({ label, to, variant = 'dark' }: ArrowCTAProps)
           </svg>
           {/* Arrow — slides in on hover */}
           <svg
-            className={`arrow-cta__svg ${isHovered ? 'arrow-visible' : 'arrow-in'}`}
+            className={`arrow-cta__svg ${active ? 'arrow-visible' : 'arrow-in'}`}
             viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
           >
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         </span>
       </span>
-      <span className={`arrow-cta__label ${isHovered ? 'label-shifted' : ''}`}>
+      <span className={`arrow-cta__label ${active ? 'label-shifted' : ''}`}>
         {label}
       </span>
     </Link>

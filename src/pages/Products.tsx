@@ -52,7 +52,7 @@ function ProductSection({
         >
           {description}
         </p>
-        <ArrowCTA label={t('products.cta.button')} to="/contact" />
+        <ArrowCTA label={t('products.cta.button')} to="/contact" externalHovered={isHovered} />
       </div>
     </div>
   )
