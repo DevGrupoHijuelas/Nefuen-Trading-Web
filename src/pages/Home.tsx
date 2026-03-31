@@ -46,15 +46,6 @@ export default function Home() {
     currentSection.current = index
     setActiveSection(index)
 
-    if (index === 2) {
-      setTimeout(() => {
-        const sc = document.querySelector('.markets-scroll-container')
-        if (sc) {
-          sc.scrollLeft = prevIndex === 3 ? sc.scrollWidth : 0
-        }
-      }, 50)
-    }
-
     if (index === 3) {
       setTimeout(() => {
         const scrollContainer = document.querySelector('.gallery-scroll-container')
@@ -146,12 +137,11 @@ export default function Home() {
     }
 
     const getScrollContainer = (): Element | null => {
-      if (currentSection.current === 2) return document.querySelector('.markets-scroll-container')
       if (currentSection.current === 3) return document.querySelector('.gallery-scroll-container')
       return null
     }
 
-    const isHorizontalScroll = () => currentSection.current === 2
+    const isHorizontalScroll = () => false
 
     const getScrollBounds = (sc: Element) => {
       if (isHorizontalScroll()) {
@@ -187,7 +177,7 @@ export default function Home() {
       else if (e.deltaY < 0) handleScroll('up')
     }
 
-    const isScrollSection = () => currentSection.current === 2 || currentSection.current === 3
+    const isScrollSection = () => currentSection.current === 3
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY

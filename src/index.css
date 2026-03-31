@@ -1229,50 +1229,43 @@ body {
   opacity: 0.1;
   pointer-events: none;
   z-index: 5;
-  will-change: transform;
   user-select: none;
   overflow: hidden;
 }
+
+/* Globe is static — marquee provides the motion */
 
 .markets-globe svg {
   width: 100%;
   height: auto;
 }
 
-/* Horizontal scrolling globe wheel */
-.markets-scroll-container {
+/* Marquee — infinite auto-scrolling country names */
+.markets-marquee {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 75%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+  height: 65%;
+  overflow: hidden;
   z-index: 11;
-  pointer-events: auto;
   display: flex;
   align-items: center;
-  scrollbar-width: none;
+  pointer-events: none;
 }
 
-.markets-scroll-container::-webkit-scrollbar {
-  display: none;
-}
-
-.markets-spacer-left,
-.markets-spacer-right {
-  flex-shrink: 0;
-  width: 35vw;
-}
-
-.markets-item {
-  flex-shrink: 0;
-  padding: 0 clamp(16px, 3vw, 40px);
+.markets-marquee__track {
   display: flex;
   align-items: flex-start;
+  gap: clamp(24px, 4vw, 56px);
   padding-top: 2vh;
+  animation: marquee-scroll 65s linear infinite;
+  will-change: transform;
+}
+
+@keyframes marquee-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .markets-name {
@@ -1287,6 +1280,7 @@ body {
   will-change: opacity, filter, transform;
   cursor: default;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
@@ -1298,15 +1292,13 @@ body {
     font-size: clamp(2rem, 8vw, 3rem);
   }
 
-  .markets-scroll-container {
-    height: 55%;
-    top: auto;
-    bottom: 0%;
+  .markets-marquee {
+    height: 50%;
   }
 
-  .markets-spacer-left,
-  .markets-spacer-right {
-    width: 25vw;
+  .markets-marquee__track {
+    animation-duration: 45s;
+    gap: 20px;
   }
 
   .markets-name {
