@@ -123,6 +123,7 @@ export default function Products() {
           description={t('products.item.blanched.desc')}
           image="/blanched.webp"
         />
+        {/* Hidden until further notice — value-added products
         <ProductSection
           title={t('products.item.roasted.name')}
 
@@ -130,6 +131,7 @@ export default function Products() {
           image="/landvalor.webp"
           reverse
         />
+        */}
       </section>
 
       {/* Certifications Section */}

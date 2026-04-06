@@ -5,7 +5,7 @@ const ITEMS = [
   { label: '01', key: '01', bg: '#1B5E20' },
   { label: '02', key: '02', bg: '#316838' },
   { label: '03', key: '03', bg: '#388E3C' },
-  { label: '04', key: '04', bg: '#7CB342' },
+  // { label: '04', key: '04', bg: '#7CB342' }, // Hidden until further notice — value-added products
 ]
 
 export default function FrameSequence() {
