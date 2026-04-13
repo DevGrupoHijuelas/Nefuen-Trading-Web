@@ -26,7 +26,7 @@ export default function Contact() {
   const onCaptchaLoad = useCallback(() => {
     if (captchaRef.current && window.grecaptcha && !captchaRef.current.hasChildNodes()) {
       window.grecaptcha.render(captchaRef.current, {
-        sitekey: '6LcmsLUsAAAAAIepMcrtOyWj7VPuSErPArePCOcC',
+        sitekey: '6LeisbUsAAAAAOg6n-T-mYVPceoWUVXI87BBcLB_',
         callback: (token: string) => setCaptchaToken(token),
         'expired-callback': () => setCaptchaToken(null),
       })
