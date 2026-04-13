@@ -39,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     await resend.emails.send({
-      from: 'Nefuen Trading Web <onboarding@resend.dev>',
+      from: 'Nefuen Trading Web <noreply@nefuentrading.cl>',
       to: RECIPIENTS,
       replyTo: email,
       subject: `New contact from ${name}${company ? ` — ${company}` : ''}`,
