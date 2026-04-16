@@ -135,7 +135,8 @@ export default function Products() {
         */}
       </section>
 
-      {/* Certifications Section */}
+      {/* Certifications Section — ocultada temporalmente, re-habilitar cuando se agreguen las certificaciones */}
+      {/*
       <section className="products-cert">
         <div className="products-cert__inner">
           <div className="products-cert__text">
@@ -153,6 +154,7 @@ export default function Products() {
           </div>
         </div>
       </section>
+      */}
 
       {/* CTA Section */}
       <section className="about-cta-section">

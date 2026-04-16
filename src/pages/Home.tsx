@@ -322,10 +322,12 @@ export default function Home() {
 
       <div className="fullpage-wrapper" ref={wrapperRef}>
         <section className="fullpage-section" ref={(el) => addSectionRef(el, 0)}>
+          {/* Cert badges ocultos temporalmente — re-habilitar cuando se agreguen las certificaciones
           <div className={`cert-badges ${showUI ? 'fade-in' : 'hidden'}`}>
             <img src="/brcgs-food-safety.png" alt="BRCGS Food Safety Certificated" className="cert-brcgs" />
             <img src="/smeta.png" alt="SMETA" />
           </div>
+          */}
           <div className={`hero-overlay ${showUI ? 'fade-in' : 'hidden'}`}>
             <div className="hero-content reveal-text">
               <h1>{t('hero.title')}</h1>
