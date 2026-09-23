@@ -1211,6 +1211,15 @@ body {
   padding-top: 12vh;
 }
 
+/* Desktop: reserve room for the fixed title so the first card never rides into it.
+   The title height is font-driven (~130px) while the card offset is 12vh, so under
+   ~1000px of viewport height the card climbed over "OUR SERVICES". */
+@media (min-width: 1025px) {
+  .gallery-scroll-container {
+    padding-top: max(0px, calc(320px - 25vh));
+  }
+}
+
 @media (max-width: 1024px) {
   .gallery-fixed-title {
     top: 5%;
